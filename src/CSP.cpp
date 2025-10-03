@@ -39,6 +39,15 @@ void CSP::print()
     }
 }
 
+vector<int> CSP::reorder(vector<int> list, vector<int> order)
+{
+    vector<int> reordered(order.size());
+    for (size_t i = 0; i < order.size(); i++) {
+        reordered[order[i]] = list[i];
+    }
+    return reordered;
+}
+
 pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
 {
     int var_introduite = -1;
@@ -50,7 +59,7 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
             val_introduite = instantiation_partielle[instantiation_partielle.size() - 1];
         }
 
-    for (size_t i = 0; i < instantiation_partielle.size() - 1; i++)
+    for (size_t i = 0; i + 1 < instantiation_partielle.size(); i++)
     {
         int var_comparaison = ordre_variables[i];
         int val_comparaison = instantiation_partielle[i];
@@ -66,7 +75,7 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
     }
 
     if (instantiation_partielle.size() == ordre_variables.size())
-        return {true,instantiation_partielle};
+        return {true,reorder(instantiation_partielle,ordre_variables)};
 
     int nouvelle_var = ordre_variables[instantiation_partielle.size()];
     for (int val : Domaines[nouvelle_var])

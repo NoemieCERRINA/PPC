@@ -16,5 +16,10 @@ int main(int argc, char *argv[])
     cout << constraints[0].supporte(1,D2.begin(),D2.end()) << "    " << constraints[0].supporte(2,D2.begin(),D2.end()) << "\n";
     cout << constraints[0].arc_consistant(D1.begin(),D1.end(),D2.begin(),D2.end()) << "    " << constraints[0].arc_consistant(D1.begin()+1,D1.end(),D2.begin(),D2.end()) << "\n";
     
+    auto result = Queen.backtrack({},{0,1});
+    cout << result.first << "\n";
+    for (int v : result.second)
+        cout << v << " ";
+
     return 0;
 }

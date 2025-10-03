@@ -24,7 +24,7 @@ public:
     CSP(int n, vector<vector<int>> D, vector<Constraint> C);
     void print();
 
-
+    vector<int> reorder(vector<int> list, vector<int> order);
     pair<bool, vector<int>> backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables);
 };
 
