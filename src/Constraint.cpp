@@ -24,3 +24,43 @@ void Constraint::print()
     }
     cout << endl;
 }
+
+int Constraint::getX1() const
+{
+    return x1;
+}
+
+int Constraint::getX2() const
+{
+    return x2;
+}
+
+bool Constraint::verifie(int val1, int val2) const
+{
+    for (const auto& p : valeurs)
+    {
+        if (p.first == val1 && p.second == val2)
+            return true;
+    }
+    return false;
+}
+
+bool Constraint::supporte(int val1, vector<int>::const_iterator begin, vector<int>::const_iterator end) const
+{
+    for (auto it = begin; it != end; it++)
+    {
+        if (verifie(val1, *it))
+            return true;
+    }
+    return false;
+}
+
+bool Constraint::arc_consistant(vector<int>::const_iterator begin1, vector<int>::const_iterator end1, vector<int>::const_iterator begin2, vector<int>::const_iterator end2) const
+{
+    for (auto it1 = begin1; it1 != end1; it1++)
+    {
+        if (supporte(*it1, begin2, end2))
+            return true;
+    }
+    return false;
+}
