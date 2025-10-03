@@ -18,12 +18,14 @@ private:
     int nVar;                     // nombre de variables
     vector<vector<int>> Domaines; // ensemble des domaines de definition
     vector<Constraint> Constraints;
+    vector<vector<Constraint*>> constraintMatrix; // pour accès en tant constant à la contrainte entre x1 et x2 
 
 public:
     CSP(int n, vector<vector<int>> D, vector<Constraint> C);
     void print();
 
-    pair<bool, vector<int>> solve();
+
+    pair<bool, vector<int>> solve(vector<int> fin_domaines);
 };
 
 #endif

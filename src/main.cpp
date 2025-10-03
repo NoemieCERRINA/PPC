@@ -6,7 +6,7 @@
 int main(int argc, char *argv[])
 {
     vector<Constraint> constraints;
-    constraints.push_back(Constraint(1, 2, {pair<int, int>(1, 1)}));
+    constraints.push_back(Constraint(0, 1, {pair<int, int>(1, 1)})); // Initialiser variables à 0 pour simplifier indexation
     CSP Queen = CSP(2, {{1, 2}, {1, 2}}, constraints);
     Queen.print();
 

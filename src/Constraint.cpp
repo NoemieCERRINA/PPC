@@ -25,6 +25,16 @@ void Constraint::print()
     cout << endl;
 }
 
+int Constraint::getX1()
+{
+    return x1;
+}
+
+int Constraint::getX2()
+{
+    return x2;
+}
+
 bool Constraint::verifie(int val1, int val2) const
 {
     for (const auto& p : valeurs)

@@ -5,6 +5,13 @@ CSP::CSP(int n, vector<vector<int>> D, vector<Constraint> C)
     nVar = n;
     Domaines = D;
     Constraints = C;
+
+    constraintMatrix.assign(nVar, vector<Constraint*>(nVar, nullptr));
+    for (auto &c : Constraints) {
+        int i = c.getX1();
+        int j = c.getX2();
+        constraintMatrix[i][j] = &c;
+    }
 }
 
 void CSP::print()
@@ -31,3 +38,4 @@ void CSP::print()
         i++;
     }
 }
+
