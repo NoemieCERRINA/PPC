@@ -22,6 +22,8 @@ private:
 public:
     CSP(int n, vector<vector<int>> D, vector<Constraint> C);
     void print();
+
+    pair<bool, vector<int>> solve();
 };
 
 #endif
