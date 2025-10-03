@@ -25,12 +25,12 @@ void Constraint::print()
     cout << endl;
 }
 
-int Constraint::getX1()
+int Constraint::getX1() const
 {
     return x1;
 }
 
-int Constraint::getX2()
+int Constraint::getX2() const
 {
     return x2;
 }

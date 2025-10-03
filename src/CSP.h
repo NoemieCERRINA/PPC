@@ -25,7 +25,7 @@ public:
     void print();
 
 
-    pair<bool, vector<int>> solve(vector<int> fin_domaines);
+    pair<bool, vector<int>> backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables);
 };
 
 #endif
