@@ -2,9 +2,13 @@
 #define CSP_H
 
 #include "Constraint.h"
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include "json.hpp"
+
+using json = nlohmann::json;
 using namespace std;
 
 /*
@@ -22,6 +26,7 @@ private:
 
 public:
     CSP(int n, vector<vector<int>> D, vector<Constraint> C);
+    CSP(const std::string& filename);
     void print();
 
     vector<int> reorder(vector<int> list, vector<int> order);
