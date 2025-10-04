@@ -7,10 +7,52 @@ CSP::CSP(int n, vector<vector<int>> D, vector<Constraint> C)
     Constraints = C;
 
     constraintMatrix.assign(nVar, vector<Constraint*>(nVar, nullptr));
-    for (auto &c : Constraints) {
+    for (auto &c : C) {
         int i = c.getX1();
         int j = c.getX2();
         constraintMatrix[i][j] = &c;
+    }
+}
+
+CSP::CSP(const std::string& filename){
+
+    ifstream file(filename);
+    json instance;
+    file >> instance;
+
+    nVar = instance["nVar"].get<int>();
+
+    Domaines.assign(nVar, {});
+
+    for (const auto& group : instance["Domaines"])
+    {
+        vector<int> vars = group["vars"].get<vector<int>>();
+        vector<int> values = group["values"].get<vector<int>>();
+
+        for (int var : vars)
+            Domaines[var] = values;
+    }
+
+    constraintMatrix.assign(nVar, vector<Constraint*>(nVar, nullptr));
+
+    for (const auto& group : instance["Constraints"])
+    {
+        vector<vector<int>> vars_list = group["vars"].get<vector<vector<int>>>();
+        vector<vector<int>> vals_list = group["allowed"].get<vector<vector<int>>>();
+
+        vector<pair<int,int>> allowed;
+        for (const auto& p : vals_list)
+            allowed.emplace_back(p[0], p[1]);
+
+        for (const auto& var_pair : vars_list)
+        {
+            int x1 = var_pair[0];
+            int x2 = var_pair[1];
+
+            Constraint c(x1, x2, allowed);
+            Constraints.push_back(c);
+            constraintMatrix[x1][x2] = &Constraints.back();
+        }
     }
 }
 
