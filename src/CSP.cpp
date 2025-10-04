@@ -2,6 +2,8 @@
 
 CSP::CSP(int n, vector<vector<int>> D, vector<Constraint> C)
 {
+    // Constructeur à partir de variables
+
     nVar = n;
     Domaines = D;
     Constraints = C;
@@ -14,7 +16,9 @@ CSP::CSP(int n, vector<vector<int>> D, vector<Constraint> C)
     }
 }
 
-CSP::CSP(const std::string& filename){
+CSP::CSP(const std::string& filename)
+{
+    // Constructeur à partir d'un fichier
 
     ifstream file(filename);
     json instance;
@@ -83,6 +87,8 @@ void CSP::print()
 
 vector<int> CSP::reorder(vector<int> list, vector<int> order)
 {
+    // Fonction auxiliaire pour trier une liste d'entier en fonction d'un ordre donné
+    
     vector<int> reordered(order.size());
     for (size_t i = 0; i < order.size(); i++) {
         reordered[order[i]] = list[i];
@@ -92,6 +98,8 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
 
 pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
 {
+
+    // On récupère la dernière variable introduite et sa valeur
     int var_introduite = -1;
     int val_introduite = -1;
 
@@ -101,6 +109,7 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
             val_introduite = instantiation_partielle[instantiation_partielle.size() - 1];
         }
 
+    // On vérifie que la variable que l'on vient d'introduire ne viole aucune contrainte avec les autres variables déjà instanciée
     for (size_t i = 0; i + 1 < instantiation_partielle.size(); i++)
     {
         int var_comparaison = ordre_variables[i];
@@ -116,9 +125,11 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
             return {false, {}};
     }
 
+    // Si on a instancié toutes les variables, alors cette instantiation est valide
     if (instantiation_partielle.size() == ordre_variables.size())
         return {true,reorder(instantiation_partielle,ordre_variables)};
 
+    // Sinon, on instancie récursivement une nouvelle variable dans l'ordre spécifiée avec chacune de ses valeurs possibles successivement
     int nouvelle_var = ordre_variables[instantiation_partielle.size()];
     for (int val : Domaines[nouvelle_var])
     {
@@ -131,6 +142,7 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
             return return_backtrack;
     }
 
+    // Si toutes les instantiations précédentes aboutissent à une contradiction, alors on backtrack
     return {false, {}};
 }
 
