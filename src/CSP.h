@@ -29,6 +29,7 @@ private:
 public:
     CSP(int n, vector<vector<int>> D, vector<Constraint> C);
     CSP(const std::string &filename);
+    CSP();
     void print();
 
     int getnVar() const;

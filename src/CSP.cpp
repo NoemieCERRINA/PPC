@@ -1,5 +1,12 @@
 #include "CSP.h"
 
+CSP::CSP()
+{
+    nVar = 0;
+    Domaines = {};
+    Constraints = {};
+}
+
 CSP::CSP(int n, vector<vector<int>> D, vector<Constraint> C)
 {
     // Constructeur à partir de variables
