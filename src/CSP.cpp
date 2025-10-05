@@ -68,7 +68,7 @@ CSP::CSP(const std::string &filename)
 
 void CSP::print()
 {
-    int i = 1;
+    int i = 0;
     cout << "Nombre de variables: " << nVar << endl;
     cout << "Domaine des variables: " << endl;
     for (vector<int> domaine : Domaines)
@@ -82,7 +82,7 @@ void CSP::print()
         i++;
     }
     cout << "Contraintes: " << endl;
-    i = 1;
+    i = 0;
     for (Constraint contrainte : Constraints)
     {
         cout << "C" + to_string(i) + ": ";
@@ -110,13 +110,6 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
 
 pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
 {
-    cout << "instantiation actuelle: ";
-    for (int i : instantiation_partielle)
-    {
-        cout << i << ", ";
-    }
-    cout << endl;
-
     // On récupère la dernière variable introduite et sa valeur
     int var_introduite = -1;
     int val_introduite = -1;
@@ -127,30 +120,21 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
         val_introduite = instantiation_partielle[instantiation_partielle.size() - 1];
     }
 
-    cout << "Backtrack, instanciation de la variable " << var_introduite << " a la valeur " << val_introduite << endl;
-
     // On vérifie que la variable que l'on vient d'introduire ne viole aucune contrainte avec les autres variables déjà instanciées
     for (size_t i = 0; i + 1 < instantiation_partielle.size(); i++)
     {
-        cout << i << endl;
         int var_comparaison = ordre_variables[i];
         int val_comparaison = instantiation_partielle[i];
 
-        cout << i + 10 << endl;
         Constraint *contrainte1 = constraintMatrix[var_introduite][var_comparaison];
-
-        cout << i + 20 << endl;
         if (contrainte1 != nullptr && !(contrainte1->verifie(val_introduite, val_comparaison)))
             return {false, {}};
 
-        cout << i + 30 << endl;
         // QUESTION - Est-ce qu'il faut garder? Contraintes directionnelles/symétriques ou non? -> modif apportee a Constraint, sont construites telles que x1 < x2
         Constraint *contrainte2 = constraintMatrix[var_comparaison][var_introduite];
         if (contrainte2 != nullptr && !(contrainte2->verifie(val_comparaison, val_introduite)))
             return {false, {}};
     }
-
-    cout << "checkpoint 1" << endl;
 
     // Si on a instancié toutes les variables, alors cette instantiation est valide
     if (instantiation_partielle.size() == ordre_variables.size())
@@ -165,7 +149,6 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
 
         auto return_backtrack = backtrack(nv_instantiation_partielle, ordre_variables);
 
-        cout << "checkpoint 2" << endl;
         if (return_backtrack.first)
             return return_backtrack;
     }
@@ -179,25 +162,22 @@ void CSP::generate_json_instance(const std::string &filename)
     json j;
 
     j["nVar"] = nVar;
-    j["Domaines"] = Domaines;
+    j["Domaines"] = json::array();
+
+    json d;
+    for (int i = 0; i < nVar; i++)
+    {
+        d["vars"] = {i};
+        d["values"] = Domaines[i];
+        j["Domaines"].push_back(d);
+    }
+
     j["Constraints"] = json::array();
     for (Constraint c : Constraints)
     {
         j["Constraints"].push_back(c.makeJson());
     }
 
-    /*
-    json domaine;
-    domaine["vars"] = {0, 1};
-    domaine["values"] = {0, 1};
-    j["Domaines"].push_back(domaine);
-
-    j["Constraints"] = json::array();
-    json constraint;
-    constraint["vars"] = {{1, 0}};
-    constraint["allowed"] = {{0, 1}, {1, 0}};
-    j["Constraints"].push_back(constraint);
-    */
     std::ofstream o(filename);
     o << std::setw(4) << j << std::endl;
 }
