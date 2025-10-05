@@ -1,3 +1,4 @@
 obj/
 solver
 .vscode/
+test.json
