@@ -5,7 +5,8 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc < 2) {
+    if (argc < 2)
+    {
         cerr << "Usage: " << argv[0] << " <instance_file>" << endl;
         return 1;
     }
@@ -15,10 +16,23 @@ int main(int argc, char *argv[])
     CSP csp = CSP(filename);
     csp.print();
 
-    auto result = csp.backtrack({},{0,1});
-    cout << result.first << "\n";
-    for (int v : result.second)
-        cout << v << " ";
+    vector<int> ordre_initial = {};
+    for (int i = 0; i < csp.getnVar(); i++)
+    {
+        ordre_initial.emplace_back(i);
+    }
+
+    auto result = csp.backtrack({}, ordre_initial);
+
+    cout << "Resultat: " << result.first << "\n";
+    if (result.first)
+    {
+        cout << "Instance solution: ";
+        for (int v : result.second)
+            cout << v << " ";
+        cout << endl;
+    }
+    csp.generate_json_instance("instances/test.json");
 
     return 0;
 }
