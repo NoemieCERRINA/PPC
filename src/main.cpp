@@ -2,6 +2,7 @@
 #include <string.h>
 #include "Constraint.h"
 #include "CSP.h"
+#include "utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,7 +14,10 @@ int main(int argc, char *argv[])
 
     string filename = argv[1];
 
-    CSP csp = CSP(filename);
+    CSP csp;
+    // csp= CSP(filename);
+    int n = 15;
+    csp = Queens_generator(n);
     csp.print();
 
     vector<int> ordre_initial = {};
