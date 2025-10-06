@@ -37,7 +37,7 @@ public:
 
     int getnVar() const;
     pair<bool, vector<int>> backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables);
-    void AC4(vector<int> domain_last_elts = {});
+    vector<int> AC4(vector<int> domain_last_elts = {});
     void generate_json_instance(const std::string &filename);
 };
 

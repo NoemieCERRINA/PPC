@@ -164,8 +164,12 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
     return {false, {}};
 }
 
-void CSP::AC4(vector<int> domain_last_elts)
+vector<int> CSP::AC4(vector<int> domain_last_elts)
 {
+    // Remarques:
+    // Q est implémenté comme une pile ici
+    // J'ai un petit doute sur la correction de la méthode de retrait d'une valeur d'un domaine dans l'initialisation
+    // La vérification que v1 appartient à d1 dans la phase de propagation est-elle nécessaire?
 
     if (domain_last_elts.empty())
     {
@@ -209,9 +213,34 @@ void CSP::AC4(vector<int> domain_last_elts)
         }
     }
 
-    // TODO - Phase de propagation
+    // Phase de propagation
+    while (Q.size() > 0)
+    {
+        int x2 = Q.back().first;
+        int v2 = Q.back().second;
+        Q.pop_back();
 
-    return;
+        for (auto &couple1 : S[{x2,v2}])
+        {
+            int x1 = couple1.first;
+            int v1 = couple1.second;
+            vector<int> &d1 = Domaines[x1];
+
+            Count[{x1,x2,v1}]--;
+
+            auto it = find(d1.begin(), d1.begin() + new_domain_last_elts[x1], v1);
+
+            if (it != d1.begin() + new_domain_last_elts[x1])
+            {
+                auto index = distance(d1.begin(), it);
+                swap(d1[index], d1[new_domain_last_elts[x1] - 1]);
+                new_domain_last_elts[x1]--;
+                Q.push_back({x1,v1});
+            }
+        }
+    }
+
+    return new_domain_last_elts;
 }
 
 void CSP::generate_json_instance(const std::string &filename)

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     // csp = CSP(filename);
     int n = 20;
     csp = Queens_generator(n);
-    csp.AC4();
+    vector<int> domain_last_elts = csp.AC4();
     return 0;
     // csp.print();
 
