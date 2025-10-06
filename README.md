@@ -8,7 +8,7 @@ Projet de Programmation par contraintes du MPRO
 - [x] - Définition d'une syntaxe pour représentation fichier d'un CSP.
 - [x] - Codage d'un parser fichier -> objets.
 - [ ] - Implémentation de AC3.
-- [ ] - Implémentation de AC4.
+- [x] - Implémentation de AC4.
 - [ ] - Implémentation de FC.
 - [x] - Codage d'un générateur de fichier à partir d'un CSP objet
 - [x] - Génération de fichiers tests n-reines.
@@ -40,5 +40,5 @@ Un exemple simple de fichier d'instance est donné ici: [./instances/example.jso
 | Domaines.vars | liste(int) | Liste de variables partageant le même domaine |
 | Domaines.values | liste(int) | Liste des valeurs du domaine |
 | Contraintes | liste(json) | Définition des contraintes |
-| Domaines.vars | liste(pair<int,int>) | Liste des paires ordonnées de variables possédant la même contrainte définie en extension |
-| Domaines.allowed | liste(pair<int,int>) | Liste des paires ordonnées de valeurs autorisées par la contrainte |
+| Contraintes.vars | liste(pair<int,int>) | Liste des paires ordonnées de variables possédant la même contrainte définie en extension |
+| Contraintes.allowed | liste(pair<int,int>) | Liste des paires ordonnées de valeurs autorisées par la contrainte |
