@@ -15,12 +15,14 @@ int main(int argc, char *argv[])
     string filename = argv[1];
 
     CSP csp;
-    // csp = CSP(filename);
-    int n = 20;
-    csp = Queens_generator(n);
+    csp = CSP(filename);
+    // int n = 20;
+    // csp = Queens_generator(n);
     vector<int> domain_last_elts = csp.AC4();
+    csp.print();
+    for (int elt : domain_last_elts)
+        cout << elt << ", ";
     return 0;
-    // csp.print();
 
     vector<int> ordre_initial = {};
     for (int i = 0; i < csp.getnVar(); i++)

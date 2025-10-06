@@ -189,6 +189,8 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
         int x2 = c.getX2();
         auto &d1 = Domaines[x1];
         auto &d2 = Domaines[x2];
+
+        // Sens direct
         for (int i = 0; i < new_domain_last_elts[x1]; i++)
         {
             int v1 = d1[i];
@@ -209,6 +211,30 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
                 new_domain_last_elts[x1]--;
                 i--;
                 Q.push_back({x1,v1});
+            }
+        }
+
+        // Sens indirect
+        for (int i = 0; i < new_domain_last_elts[x2]; i++)
+        {
+            int v2 = d2[i];
+            int total = 0;
+            for (int j = 0; j < new_domain_last_elts[x1]; j++)
+            {
+                int v1 = d1[j];
+                if (c.verifie(v1,v2))
+                {
+                    total++;
+                    S[{x1,v1}].push_back({x2,v2});
+                }
+            }
+            Count[{x2,x1,v2}] = total;
+            if (total == 0)
+            {
+                swap(d2[i], d2[new_domain_last_elts[x2] - 1]);
+                new_domain_last_elts[x2]--;
+                i--;
+                Q.push_back({x2,v2});
             }
         }
     }
