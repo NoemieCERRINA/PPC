@@ -16,17 +16,14 @@ int main(int argc, char *argv[])
 
     CSP csp;
     // csp = CSP(filename);
-    int n = 20;
+    int n = 15;
     csp = Queens_generator(n);
-    // csp.print();
+    //vector<int> domain_last_elts = csp.AC4();
+    csp.print();
+    // for (int elt : domain_last_elts)
+    //    cout << elt << ", ";
 
-    vector<int> ordre_initial = {};
-    for (int i = 0; i < csp.getnVar(); i++)
-    {
-        ordre_initial.emplace_back(i);
-    }
-
-    auto result = csp.backtrack({}, ordre_initial);
+    auto result = csp.MAC4();
 
     cout << "Resultat: " << result.first << "\n";
     if (result.first)

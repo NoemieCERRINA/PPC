@@ -117,6 +117,12 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
 
 pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
 {
+    if (ordre_variables.empty())
+    {
+        for (int i = 0; i < nVar; i++)
+            ordre_variables.push_back(i);
+    }
+
     // On récupère la dernière variable introduite et sa valeur
     int var_introduite = -1;
     int val_introduite = -1;
@@ -162,6 +168,175 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
 
     // Si toutes les instantiations précédentes aboutissent à une contradiction, alors on backtrack
     return {false, {}};
+}
+
+vector<int> CSP::AC4(vector<int> domain_last_elts)
+{
+    // Remarques:
+    // Q est implémenté comme une pile ici
+    // J'ai un petit doute sur la correction de la méthode de retrait d'une valeur d'un domaine dans l'initialisation
+    // La vérification que v1 appartient à d1 dans la phase de propagation est-elle nécessaire?
+
+    if (domain_last_elts.empty())
+    {
+        for (const auto& domain : Domaines)
+            domain_last_elts.push_back(static_cast<int>(domain.size()));
+    }
+    vector<int> new_domain_last_elts = domain_last_elts;
+
+    /*cout << "Domain Last Elts : ";
+    for (int i : domain_last_elts)
+        cout << i << ", ";
+    cout << "\n";
+
+    cout << "Domaines : " << "\n";
+    for (int i = 0; i < nVar; i++)
+    {
+        cout << "Domaine: " << i << " : ";
+        for (int j : Domaines[i])
+            cout << j << ", ";
+        cout << "\n";
+    }*/
+
+    // Phase d'initialisation
+    map<tuple<int,int,int>, int> Count;
+    map<pair<int,int>, vector<pair<int,int>>> S;
+    vector<pair<int,int>> Q;
+
+    for (const auto &c : Constraints)
+    {
+        int x1 = c.getX1();
+        int x2 = c.getX2();
+        auto &d1 = Domaines[x1];
+        auto &d2 = Domaines[x2];
+
+        // Sens direct
+        for (int i = 0; i < new_domain_last_elts[x1]; i++)
+        {
+            int v1 = d1[i];
+            int total = 0;
+            for (int j = 0; j < new_domain_last_elts[x2]; j++)
+            {
+                int v2 = d2[j];
+                if (c.verifie(v1,v2))
+                {
+                    total++;
+                    S[{x2,v2}].push_back({x1,v1});
+                }
+            }
+            Count[{x1,x2,v1}] = total;
+            if (total == 0)
+            {
+                //cout << "Direct Support nul: <" << x1 << ", " << v1 << "> - " << x2 << "\n";
+                swap(d1[i], d1[new_domain_last_elts[x1] - 1]);
+                new_domain_last_elts[x1]--;
+                i--;
+                Q.push_back({x1,v1});
+            }
+        }
+
+        // Sens indirect
+        for (int i = 0; i < new_domain_last_elts[x2]; i++)
+        {
+            int v2 = d2[i];
+            int total = 0;
+            for (int j = 0; j < new_domain_last_elts[x1]; j++)
+            {
+                int v1 = d1[j];
+                if (c.verifie(v1,v2))
+                {
+                    total++;
+                    S[{x1,v1}].push_back({x2,v2});
+                }
+            }
+            Count[{x2,x1,v2}] = total;
+            if (total == 0)
+            {
+                //cout << "Indirect Support nul: <" << x2 << ", " << v2 << "> - " << x1 << "\n";
+                swap(d2[i], d2[new_domain_last_elts[x2] - 1]);
+                new_domain_last_elts[x2]--;
+                i--;
+                Q.push_back({x2,v2});
+            }
+        }
+    }
+
+    // Phase de propagation
+    while (Q.size() > 0)
+    {
+        int x2 = Q.back().first;
+        int v2 = Q.back().second;
+        Q.pop_back();
+
+        for (auto &couple1 : S[{x2,v2}])
+        {
+            int x1 = couple1.first;
+            int v1 = couple1.second;
+            vector<int> &d1 = Domaines[x1];
+
+            Count[{x1,x2,v1}]--;
+
+            auto it = find(d1.begin(), d1.begin() + new_domain_last_elts[x1], v1);
+
+            if (Count[{x1,x2,v1}] == 0 && it != d1.begin() + new_domain_last_elts[x1])
+            {
+                //cout << "Propagate Support nul: <" << x1 << ", " << v1 << "> - <" << x2 << ", " << v2 << ">\n";
+                auto index = distance(d1.begin(), it);
+                swap(d1[index], d1[new_domain_last_elts[x1] - 1]);
+                new_domain_last_elts[x1]--;
+                Q.push_back({x1,v1});
+            }
+        }
+    }
+
+    return new_domain_last_elts;
+}
+
+pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordre_variables)
+{
+    if (ordre_variables.empty())
+    {
+        for (int i = 0; i < nVar; i++)
+            ordre_variables.push_back(i);
+    }
+
+    domain_last_elts = AC4(domain_last_elts);
+
+    for (int s : domain_last_elts)
+    {
+        if (s < 1)
+            return {false, {}};
+    }
+
+    for (int i : ordre_variables)
+    {
+        if (domain_last_elts[i] > 1)
+        {
+            vector<int> new_domain_last_elts = domain_last_elts;
+            int old_size = domain_last_elts[i];
+            new_domain_last_elts[i] = 1;
+            for (int k = 0; k < old_size; k++)
+            {
+                swap(Domaines[i][0],Domaines[i][k]);
+                auto result = MAC4(new_domain_last_elts,ordre_variables);
+                cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
+                if (result.first)
+                    return result;
+            }
+        }
+    }
+
+    for (int s : domain_last_elts)
+    {
+        if (s != 1)
+            return {false, {}};
+    }
+
+
+    vector<int> instance_valide;
+    for (int i : ordre_variables)
+        instance_valide.push_back(Domaines[i][0]);
+    return {true, instance_valide};
 }
 
 void CSP::generate_json_instance(const std::string &filename)

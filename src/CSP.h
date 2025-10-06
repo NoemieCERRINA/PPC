@@ -6,6 +6,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
+#include <tuple>
+#include <algorithm>
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -25,6 +28,7 @@ private:
     vector<vector<Constraint *>> constraintMatrix; // pour accès en tant constant à la contrainte entre x1 et x2
 
     vector<int> reorder(vector<int> list, vector<int> order);
+    vector<int> AC4(vector<int> domain_last_elts = {});
 
 public:
     CSP(int n, vector<vector<int>> D, vector<Constraint> C);
@@ -33,7 +37,8 @@ public:
     void print();
 
     int getnVar() const;
-    pair<bool, vector<int>> backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables);
+    pair<bool, vector<int>> backtrack(vector<int> instantiation_partielle = {}, vector<int> ordre_variables = {});
+    pair<bool, vector<int>> MAC4(vector<int> domain_last_elts = {}, vector<int> ordre_variables = {});
     void generate_json_instance(const std::string &filename);
 };
 
