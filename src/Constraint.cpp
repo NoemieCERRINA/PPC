@@ -2,9 +2,21 @@
 
 Constraint::Constraint(int vx1, int vx2, vector<pair<int, int>> vals)
 {
-    x1 = vx1;
-    x2 = vx2;
-    valeurs = vals;
+    if (vx1 < vx2)
+    {
+        x1 = vx1;
+        x2 = vx2;
+        valeurs = vals;
+    }
+    else
+    {
+        x1 = vx2;
+        x2 = vx1;
+        for (auto v : vals)
+        {
+            valeurs.emplace_back(v.second, v.first);
+        }
+    }
 }
 
 Constraint::Constraint()
@@ -20,7 +32,7 @@ void Constraint::print()
     cout << "Valeurs autorisees: ";
     for (pair<int, int> val : valeurs)
     {
-        cout << val.first << ", " << val.second << "; ";
+        cout << "(" << val.first << "," << val.second << "); ";
     }
     cout << endl;
 }
@@ -35,9 +47,17 @@ int Constraint::getX2() const
     return x2;
 }
 
+json Constraint::makeJson() const
+{
+    json constraint;
+    constraint["vars"] = {{x1, x2}};
+    constraint["allowed"] = valeurs;
+    return constraint;
+}
+
 bool Constraint::verifie(int val1, int val2) const
 {
-    for (const auto& p : valeurs)
+    for (const auto &p : valeurs)
     {
         if (p.first == val1 && p.second == val2)
             return true;

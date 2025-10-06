@@ -6,7 +6,7 @@ CXX = g++
 DBGFLAGS = -g -DAPM_DEBUG
 LDFLAGS = -g
 
-OBJ_RAW = Constraint CSP
+OBJ_RAW = Constraint CSP utils
 OBJ_O = $(addsuffix .o,$(OBJ_RAW))
 OBJ = $(addprefix $(OBJ_DIR)/,$(OBJ_O))
 
