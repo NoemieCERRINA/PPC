@@ -122,7 +122,7 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
         for (int i = 0; i < nVar; i++)
             ordre_variables.push_back(i);
     }
-    
+
     // On récupère la dernière variable introduite et sa valeur
     int var_introduite = -1;
     int val_introduite = -1;
@@ -184,6 +184,20 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
     }
     vector<int> new_domain_last_elts = domain_last_elts;
 
+    cout << "Domain Last Elts : ";
+    for (int i : domain_last_elts)
+        cout << i << ", ";
+    cout << "\n";
+
+    cout << "Domaines : " << "\n";
+    for (int i = 0; i < nVar; i++)
+    {
+        cout << "Domaine: " << i << " : ";
+        for (int j : Domaines[i])
+            cout << j << ", ";
+        cout << "\n";
+    }
+
     // Phase d'initialisation
     map<tuple<int,int,int>, int> Count;
     map<pair<int,int>, vector<pair<int,int>>> S;
@@ -213,6 +227,7 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
             Count[{x1,x2,v1}] = total;
             if (total == 0)
             {
+                cout << "Direct Support nul: <" << x1 << ", " << v1 << "> - " << x2 << "\n";
                 swap(d1[i], d1[new_domain_last_elts[x1] - 1]);
                 new_domain_last_elts[x1]--;
                 i--;
@@ -237,6 +252,7 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
             Count[{x2,x1,v2}] = total;
             if (total == 0)
             {
+                cout << "Indirect Support nul: <" << x2 << ", " << v2 << "> - " << x1 << "\n";
                 swap(d2[i], d2[new_domain_last_elts[x2] - 1]);
                 new_domain_last_elts[x2]--;
                 i--;
@@ -262,8 +278,9 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
 
             auto it = find(d1.begin(), d1.begin() + new_domain_last_elts[x1], v1);
 
-            if (it != d1.begin() + new_domain_last_elts[x1])
+            if (Count[{x1,x2,v1}] == 0 && it != d1.begin() + new_domain_last_elts[x1])
             {
+                cout << "Propagate Support nul: <" << x1 << ", " << v1 << "> - <" << x2 << ", " << v2 << ">\n";
                 auto index = distance(d1.begin(), it);
                 swap(d1[index], d1[new_domain_last_elts[x1] - 1]);
                 new_domain_last_elts[x1]--;
@@ -283,23 +300,24 @@ pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordr
             ordre_variables.push_back(i);
     }
 
-    domain_last_elts = AC4(domain_last_elts);
+    vector<int> new_domain_last_elts = AC4(domain_last_elts);
 
-    for (int s : domain_last_elts)
+    for (int s : new_domain_last_elts)
     {
-        if (s < 0)
+        if (s < 1)
             return {false, {}};
     }
 
     for (int i : ordre_variables)
     {
-        if (domain_last_elts[i] > 1)
+        if (new_domain_last_elts[i] > 1)
         {
-            domain_last_elts[i] = 1;
-            for (int k = 0; k < domain_last_elts[i]; k++)
+            int old_size = new_domain_last_elts[i];
+            new_domain_last_elts[i] = 1;
+            for (int k = 0; k < old_size; k++)
             {
                 swap(Domaines[i][0],Domaines[i][k]);
-                auto result = MAC4(domain_last_elts,ordre_variables);
+                auto result = MAC4(new_domain_last_elts,ordre_variables);
 
                 if (result.first)
                     return result;
