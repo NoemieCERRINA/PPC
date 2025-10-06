@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
     string filename = argv[1];
 
     CSP csp;
-    // csp= CSP(filename);
-    int n = 15;
+    // csp = CSP(filename);
+    int n = 20;
     csp = Queens_generator(n);
-    csp.print();
+    // csp.print();
 
     vector<int> ordre_initial = {};
     for (int i = 0; i < csp.getnVar(); i++)
@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
             cout << v << " ";
         cout << endl;
     }
+
     csp.generate_json_instance("instances/test.json");
 
     return 0;

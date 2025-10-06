@@ -186,5 +186,5 @@ void CSP::generate_json_instance(const std::string &filename)
     }
 
     std::ofstream o(filename);
-    o << std::setw(4) << j << std::endl;
+    o << j << std::endl;
 }
