@@ -164,6 +164,56 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
     return {false, {}};
 }
 
+void CSP::AC4(vector<int> domain_last_elts)
+{
+
+    if (domain_last_elts.empty())
+    {
+        for (const auto& domain : Domaines)
+            domain_last_elts.push_back(static_cast<int>(domain.size()));
+    }
+    vector<int> new_domain_last_elts = domain_last_elts;
+
+    // Phase d'initialisation
+    map<tuple<int,int,int>, int> Count;
+    map<pair<int,int>, vector<pair<int,int>>> S;
+    vector<pair<int,int>> Q;
+
+    for (const auto &c : Constraints)
+    {
+        int x1 = c.getX1();
+        int x2 = c.getX2();
+        auto &d1 = Domaines[x1];
+        auto &d2 = Domaines[x2];
+        for (int i = 0; i < new_domain_last_elts[x1]; i++)
+        {
+            int v1 = d1[i];
+            int total = 0;
+            for (int j = 0; j < new_domain_last_elts[x2]; j++)
+            {
+                int v2 = d2[j];
+                if (c.verifie(v1,v2))
+                {
+                    total++;
+                    S[{x2,v2}].push_back({x1,v1});
+                }
+            }
+            Count[{x1,x2,v1}] = total;
+            if (total == 0)
+            {
+                swap(d1[i], d1[new_domain_last_elts[x1] - 1]);
+                new_domain_last_elts[x1]--;
+                i--;
+                Q.push_back({x1,v1});
+            }
+        }
+    }
+
+    // TODO - Phase de propagation
+
+    return;
+}
+
 void CSP::generate_json_instance(const std::string &filename)
 {
     json j;

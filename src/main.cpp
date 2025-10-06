@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
     // csp = CSP(filename);
     int n = 20;
     csp = Queens_generator(n);
+    csp.AC4();
+    return 0;
     // csp.print();
 
     vector<int> ordre_initial = {};
