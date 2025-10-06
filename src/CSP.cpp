@@ -117,6 +117,12 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
 
 pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
 {
+    if (ordre_variables.empty())
+    {
+        for (int i = 0; i < nVar; i++)
+            ordre_variables.push_back(i);
+    }
+    
     // On récupère la dernière variable introduite et sa valeur
     int var_introduite = -1;
     int val_introduite = -1;
@@ -267,6 +273,44 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
     }
 
     return new_domain_last_elts;
+}
+
+pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordre_variables)
+{
+    if (ordre_variables.empty())
+    {
+        for (int i = 0; i < nVar; i++)
+            ordre_variables.push_back(i);
+    }
+
+    domain_last_elts = AC4(domain_last_elts);
+
+    for (int s : domain_last_elts)
+    {
+        if (s < 0)
+            return {false, {}};
+    }
+
+    for (int i : ordre_variables)
+    {
+        if (domain_last_elts[i] > 1)
+        {
+            domain_last_elts[i] = 1;
+            for (int k = 0; k < domain_last_elts[i]; k++)
+            {
+                swap(Domaines[i][0],Domaines[i][k]);
+                auto result = MAC4(domain_last_elts,ordre_variables);
+
+                if (result.first)
+                    return result;
+            }
+        }
+    }
+
+    vector<int> instance_valide;
+    for (int i : ordre_variables)
+        instance_valide.push_back(Domaines[i][0]);
+    return {true, instance_valide};
 }
 
 void CSP::generate_json_instance(const std::string &filename)

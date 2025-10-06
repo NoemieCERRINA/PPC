@@ -18,19 +18,12 @@ int main(int argc, char *argv[])
     csp = CSP(filename);
     // int n = 20;
     // csp = Queens_generator(n);
-    vector<int> domain_last_elts = csp.AC4();
+    //vector<int> domain_last_elts = csp.AC4();
     csp.print();
-    for (int elt : domain_last_elts)
-        cout << elt << ", ";
-    return 0;
+    // for (int elt : domain_last_elts)
+    //    cout << elt << ", ";
 
-    vector<int> ordre_initial = {};
-    for (int i = 0; i < csp.getnVar(); i++)
-    {
-        ordre_initial.emplace_back(i);
-    }
-
-    auto result = csp.backtrack({}, ordre_initial);
+    auto result = csp.backtrack();
 
     cout << "Resultat: " << result.first << "\n";
     if (result.first)
