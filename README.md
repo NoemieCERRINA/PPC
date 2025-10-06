@@ -11,7 +11,7 @@ Projet de Programmation par contraintes du MPRO
 - [ ] - Implémentation de AC4.
 - [ ] - Implémentation de FC.
 - [x] - Codage d'un générateur de fichier à partir d'un CSP objet
-- [ ] - Génération de fichiers tests n-reines.
+- [x] - Génération de fichiers tests n-reines.
 - [ ] - Génération de fichiers tests nombre chromatique.
 - [ ] - Génération d'autres fichiers tests.
 - [ ] - Codage des fonctions d'évaluations du moteur.
