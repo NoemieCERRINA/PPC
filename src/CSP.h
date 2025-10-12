@@ -37,12 +37,13 @@ public:
     void print();
     int getnVar() const;
 
+    vector<int> AC3(vector<int> domain_last_elts = {}, int x = -1);
     vector<int> AC4(vector<int> domain_last_elts = {}, int x1 = -1);
     vector<int> FC(vector<int> domain_last_elts = {}, int x1 = -1);
 
     pair<bool, vector<int>> backtrack(vector<int> instantiation_partielle = {}, vector<int> ordre_variables = {});
     pair<bool, vector<int>> fullFC(vector<int> domain_last_elts = {}, vector<int> ordre_variables = {}, int idx_var_introduite = -1);
-    pair<bool, vector<int>> MAC4(PropagationFct propagate = &CSP::AC4, vector<int> domain_last_elts = {}, vector<int> ordre_variables = {}, int x1 = -1);
+    pair<bool, vector<int>> MAC(PropagationFct propagate = &CSP::AC4, vector<int> domain_last_elts = {}, vector<int> ordre_variables = {}, int x1 = -1);
     void generate_json_instance(const std::string &filename);
 };
 

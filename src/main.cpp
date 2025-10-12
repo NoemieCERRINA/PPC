@@ -16,15 +16,15 @@ int main(int argc, char *argv[])
 
     CSP csp;
     // csp = CSP(filename);
-    int n = 20;
+    int n = 16;
     csp = Queens_generator(n);
     //vector<int> domain_last_elts = csp.AC4();
     csp.print();
     // for (int elt : domain_last_elts)
     //    cout << elt << ", ";
 
-    //auto result = csp.MAC4(&CSP::FC);
-    auto result = csp.fullFC();
+    auto result = csp.MAC(&CSP::AC3);
+    //auto result = csp.fullFC();
 
     cout << "Resultat: " << result.first << "\n";
     if (result.first)
