@@ -9,7 +9,7 @@ Projet de Programmation par contraintes du MPRO
 - [x] - Codage d'un parser fichier -> objets.
 - [ ] - Implémentation de AC3.
 - [x] - Implémentation de AC4.
-- [ ] - Implémentation de FC.
+- [x] - Implémentation de FC.
 - [x] - Codage d'un générateur de fichier à partir d'un CSP objet
 - [x] - Génération de fichiers tests n-reines.
 - [ ] - Génération de fichiers tests nombre chromatique.
