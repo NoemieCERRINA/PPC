@@ -7,7 +7,7 @@ Projet de Programmation par contraintes du MPRO
 - [x] - Implémentation de la méthode de backtrack.
 - [x] - Définition d'une syntaxe pour représentation fichier d'un CSP.
 - [x] - Codage d'un parser fichier -> objets.
-- [ ] - Implémentation de AC3.
+- [x] - Implémentation de AC3.
 - [x] - Implémentation de AC4.
 - [x] - Implémentation de FC.
 - [x] - Codage d'un générateur de fichier à partir d'un CSP objet

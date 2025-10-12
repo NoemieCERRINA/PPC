@@ -115,6 +115,99 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
     return reordered;
 }
 
+vector<int> CSP::AC3(vector<int> domain_last_elts, int x)
+{
+    vector<pair<int,int>> aTester;
+
+    for (const auto &c : Constraints)
+    {
+        int x1 = c.getX1();
+        int x2 = c.getX2();
+        aTester.push_back({x1,x2});
+        aTester.push_back({x2,x1});
+    }
+
+    while (!aTester.empty())
+    {
+        int x1 = aTester.back().first;
+        int x2 = aTester.back().second;
+        aTester.pop_back();
+
+        bool update = false;
+
+        Constraint *contrainte1 = constraintMatrix[x1][x2];
+        if (contrainte1 != nullptr)
+        {
+
+            for (int i = 0; i < domain_last_elts[x1]; i++)
+            {
+                int v1 = Domaines[x1][i];
+                bool supported = false;
+
+                for (int j = 0; j < domain_last_elts[x2]; j++)
+                {
+                    int v2 = Domaines[x2][j];
+                    if (contrainte1->verifie(v1, v2))
+                    {
+                        supported = true;
+                        break;
+                    }
+                }
+
+                if (!supported)
+                {
+                    swap(Domaines[x1][i], Domaines[x1][domain_last_elts[x1] - 1]);
+                    domain_last_elts[x1]--;
+                    i--;
+                    update = true;
+                }
+            }
+        }
+
+        Constraint *contrainte2 = constraintMatrix[x2][x1];
+        if (contrainte2 != nullptr)
+        {
+            for (int i = 0; i < domain_last_elts[x1]; i++)
+            {
+                int v1 = Domaines[x1][i];
+                bool supported = false;
+
+                for (int j = 0; j < domain_last_elts[x2]; j++)
+                {
+                    int v2 = Domaines[x2][j];
+                    if (contrainte2->verifie(v2, v1))
+                    {
+                        supported = true;
+                        break;
+                    }
+                }
+
+                if (!supported)
+                {
+                    swap(Domaines[x1][i], Domaines[x1][domain_last_elts[x1] - 1]);
+                    domain_last_elts[x1]--;
+                    i--;
+                    update = true;
+                }
+            }
+        }
+
+        if (update){
+            for (int k = 0; k < nVar; k++)
+            {
+                Constraint *contrainte1 = constraintMatrix[x1][k];
+                if (contrainte1 != nullptr)
+                    aTester.push_back({k,x1});
+                Constraint *contrainte2 = constraintMatrix[k][x1];
+                if (contrainte2 != nullptr)
+                    aTester.push_back({k,x1});
+            }
+        }
+    }
+
+    return domain_last_elts;
+}
+
 vector<int> CSP::AC4(vector<int> domain_last_elts, int x1)
 {
     // Remarques:
@@ -380,7 +473,7 @@ pair<bool, vector<int>> CSP::fullFC(vector<int> domain_last_elts, vector<int> or
     return {false, {}};
 }
 
-pair<bool, vector<int>> CSP::MAC4(PropagationFct propagate, vector<int> domain_last_elts, vector<int> ordre_variables, int x1)
+pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_last_elts, vector<int> ordre_variables, int x1)
 {
     if (ordre_variables.empty())
     {
@@ -412,7 +505,7 @@ pair<bool, vector<int>> CSP::MAC4(PropagationFct propagate, vector<int> domain_l
             for (int k = 0; k < old_size; k++)
             {
                 swap(Domaines[i][0],Domaines[i][k]);
-                auto result = MAC4(propagate,new_domain_last_elts,ordre_variables,i);
+                auto result = MAC(propagate,new_domain_last_elts,ordre_variables,i);
                 //cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
                 if (result.first)
                     return result;
