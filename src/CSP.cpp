@@ -170,18 +170,13 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
     return {false, {}};
 }
 
-vector<int> CSP::AC4(vector<int> domain_last_elts)
+vector<int> CSP::AC4(vector<int> domain_last_elts, int x1)
 {
     // Remarques:
     // Q est implémenté comme une pile ici
     // J'ai un petit doute sur la correction de la méthode de retrait d'une valeur d'un domaine dans l'initialisation
     // La vérification que v1 appartient à d1 dans la phase de propagation est-elle nécessaire?
 
-    if (domain_last_elts.empty())
-    {
-        for (const auto& domain : Domaines)
-            domain_last_elts.push_back(static_cast<int>(domain.size()));
-    }
     vector<int> new_domain_last_elts = domain_last_elts;
 
     /*cout << "Domain Last Elts : ";
@@ -292,7 +287,51 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
     return new_domain_last_elts;
 }
 
-pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordre_variables)
+vector<int> CSP::FC(vector<int> domain_last_elts, int x1)
+{
+    if (x1 < 0)
+        return domain_last_elts;
+
+    int v1 = Domaines[x1][0];
+
+    for (int x2 = 0; x2 < nVar; x2++)
+    {
+        Constraint *contrainte1 = constraintMatrix[x1][x2];
+        Constraint *contrainte2 = constraintMatrix[x2][x1];
+
+        if (contrainte1 != nullptr)
+        {
+            for (int i = 0; i < domain_last_elts[x2]; i++)
+            {
+                int v2 = Domaines[x2][i];
+                if (!(contrainte1->verifie(v1, v2)))
+                {
+                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2]-1]);
+                    domain_last_elts[x2]--;
+                    i--;
+                }
+            }
+        }
+
+        if (contrainte2 != nullptr)
+        {
+            for (int i = 0; i < domain_last_elts[x2]; i++)
+            {
+                int v2 = Domaines[x2][i];
+                if (!(contrainte2->verifie(v2, v1)))
+                {
+                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2]-1]);
+                    domain_last_elts[x2]--;
+                    i--;
+                }
+            }
+        }
+    }
+
+    return domain_last_elts;
+}
+
+pair<bool, vector<int>> CSP::MAC4(PropagationFct propagate, vector<int> domain_last_elts, vector<int> ordre_variables, int x1)
 {
     if (ordre_variables.empty())
     {
@@ -300,7 +339,13 @@ pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordr
             ordre_variables.push_back(i);
     }
 
-    domain_last_elts = AC4(domain_last_elts);
+    if (domain_last_elts.empty())
+    {
+        for (const auto& domain : Domaines)
+            domain_last_elts.push_back(static_cast<int>(domain.size()));
+    }
+
+    domain_last_elts = (this->*propagate)(domain_last_elts, x1);
 
     for (int s : domain_last_elts)
     {
@@ -318,8 +363,8 @@ pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordr
             for (int k = 0; k < old_size; k++)
             {
                 swap(Domaines[i][0],Domaines[i][k]);
-                auto result = MAC4(new_domain_last_elts,ordre_variables);
-                cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
+                auto result = MAC4(propagate,new_domain_last_elts,ordre_variables,i);
+                //cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
                 if (result.first)
                     return result;
             }
@@ -332,6 +377,13 @@ pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordr
             return {false, {}};
     }
 
+    domain_last_elts = AC4(domain_last_elts);
+
+    for (int s : domain_last_elts)
+    {
+        if (s != 1)
+            return {false, {}};
+    }
 
     vector<int> instance_valide;
     for (int i : ordre_variables)

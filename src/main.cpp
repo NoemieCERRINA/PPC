@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     // for (int elt : domain_last_elts)
     //    cout << elt << ", ";
 
-    auto result = csp.MAC4();
+    auto result = csp.MAC4(&CSP::FC);
 
     cout << "Resultat: " << result.first << "\n";
     if (result.first)
