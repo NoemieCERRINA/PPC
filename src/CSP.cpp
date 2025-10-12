@@ -115,73 +115,13 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
     return reordered;
 }
 
-pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
-{
-    if (ordre_variables.empty())
-    {
-        for (int i = 0; i < nVar; i++)
-            ordre_variables.push_back(i);
-    }
-
-    // On récupère la dernière variable introduite et sa valeur
-    int var_introduite = -1;
-    int val_introduite = -1;
-
-    if (instantiation_partielle.size() != 0)
-    {
-        var_introduite = ordre_variables[instantiation_partielle.size() - 1];
-        val_introduite = instantiation_partielle[instantiation_partielle.size() - 1];
-    }
-
-    // On vérifie que la variable que l'on vient d'introduire ne viole aucune contrainte avec les autres variables déjà instanciées
-    for (size_t i = 0; i + 1 < instantiation_partielle.size(); i++)
-    {
-        int var_comparaison = ordre_variables[i];
-        int val_comparaison = instantiation_partielle[i];
-
-        Constraint *contrainte1 = constraintMatrix[var_introduite][var_comparaison];
-        if (contrainte1 != nullptr && !(contrainte1->verifie(val_introduite, val_comparaison)))
-            return {false, {}};
-
-        // QUESTION - Est-ce qu'il faut garder? Contraintes directionnelles/symétriques ou non? -> modif apportee a Constraint, sont construites telles que x1 < x2
-        Constraint *contrainte2 = constraintMatrix[var_comparaison][var_introduite];
-        if (contrainte2 != nullptr && !(contrainte2->verifie(val_comparaison, val_introduite)))
-            return {false, {}};
-    }
-
-    // Si on a instancié toutes les variables, alors cette instantiation est valide
-    if (instantiation_partielle.size() == ordre_variables.size())
-        return {true, reorder(instantiation_partielle, ordre_variables)};
-
-    // Sinon, on instancie récursivement une nouvelle variable dans l'ordre spécifiée avec chacune de ses valeurs possibles successivement
-    int nouvelle_var = ordre_variables[instantiation_partielle.size()];
-    for (int val : Domaines[nouvelle_var])
-    {
-        vector<int> nv_instantiation_partielle = instantiation_partielle;
-        nv_instantiation_partielle.push_back(val);
-
-        auto return_backtrack = backtrack(nv_instantiation_partielle, ordre_variables);
-
-        if (return_backtrack.first)
-            return return_backtrack;
-    }
-
-    // Si toutes les instantiations précédentes aboutissent à une contradiction, alors on backtrack
-    return {false, {}};
-}
-
-vector<int> CSP::AC4(vector<int> domain_last_elts)
+vector<int> CSP::AC4(vector<int> domain_last_elts, int x1)
 {
     // Remarques:
     // Q est implémenté comme une pile ici
     // J'ai un petit doute sur la correction de la méthode de retrait d'une valeur d'un domaine dans l'initialisation
     // La vérification que v1 appartient à d1 dans la phase de propagation est-elle nécessaire?
 
-    if (domain_last_elts.empty())
-    {
-        for (const auto& domain : Domaines)
-            domain_last_elts.push_back(static_cast<int>(domain.size()));
-    }
     vector<int> new_domain_last_elts = domain_last_elts;
 
     /*cout << "Domain Last Elts : ";
@@ -292,7 +232,51 @@ vector<int> CSP::AC4(vector<int> domain_last_elts)
     return new_domain_last_elts;
 }
 
-pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordre_variables)
+vector<int> CSP::FC(vector<int> domain_last_elts, int x1)
+{
+    if (x1 < 0)
+        return domain_last_elts;
+
+    int v1 = Domaines[x1][0];
+
+    for (int x2 = 0; x2 < nVar; x2++)
+    {
+        Constraint *contrainte1 = constraintMatrix[x1][x2];
+        Constraint *contrainte2 = constraintMatrix[x2][x1];
+
+        if (contrainte1 != nullptr)
+        {
+            for (int i = 0; i < domain_last_elts[x2]; i++)
+            {
+                int v2 = Domaines[x2][i];
+                if (!(contrainte1->verifie(v1, v2)))
+                {
+                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2]-1]);
+                    domain_last_elts[x2]--;
+                    i--;
+                }
+            }
+        }
+
+        if (contrainte2 != nullptr)
+        {
+            for (int i = 0; i < domain_last_elts[x2]; i++)
+            {
+                int v2 = Domaines[x2][i];
+                if (!(contrainte2->verifie(v2, v1)))
+                {
+                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2]-1]);
+                    domain_last_elts[x2]--;
+                    i--;
+                }
+            }
+        }
+    }
+
+    return domain_last_elts;
+}
+
+pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
 {
     if (ordre_variables.empty())
     {
@@ -300,7 +284,117 @@ pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordr
             ordre_variables.push_back(i);
     }
 
-    domain_last_elts = AC4(domain_last_elts);
+    // On récupère la dernière variable introduite et sa valeur
+    int var_introduite = -1;
+    int val_introduite = -1;
+
+    if (instantiation_partielle.size() != 0)
+    {
+        var_introduite = ordre_variables[instantiation_partielle.size() - 1];
+        val_introduite = instantiation_partielle[instantiation_partielle.size() - 1];
+    }
+
+    // On vérifie que la variable que l'on vient d'introduire ne viole aucune contrainte avec les autres variables déjà instanciées
+    for (size_t i = 0; i + 1 < instantiation_partielle.size(); i++)
+    {
+        int var_comparaison = ordre_variables[i];
+        int val_comparaison = instantiation_partielle[i];
+
+        Constraint *contrainte1 = constraintMatrix[var_introduite][var_comparaison];
+        if (contrainte1 != nullptr && !(contrainte1->verifie(val_introduite, val_comparaison)))
+            return {false, {}};
+
+        // QUESTION - Est-ce qu'il faut garder? Contraintes directionnelles/symétriques ou non? -> modif apportee a Constraint, sont construites telles que x1 < x2
+        Constraint *contrainte2 = constraintMatrix[var_comparaison][var_introduite];
+        if (contrainte2 != nullptr && !(contrainte2->verifie(val_comparaison, val_introduite)))
+            return {false, {}};
+    }
+
+    // Si on a instancié toutes les variables, alors cette instantiation est valide
+    if (instantiation_partielle.size() == ordre_variables.size())
+        return {true, reorder(instantiation_partielle, ordre_variables)};
+
+    // Sinon, on instancie récursivement une nouvelle variable dans l'ordre spécifiée avec chacune de ses valeurs possibles successivement
+    int nouvelle_var = ordre_variables[instantiation_partielle.size()];
+    for (int val : Domaines[nouvelle_var])
+    {
+        vector<int> nv_instantiation_partielle = instantiation_partielle;
+        nv_instantiation_partielle.push_back(val);
+
+        auto return_backtrack = backtrack(nv_instantiation_partielle, ordre_variables);
+
+        if (return_backtrack.first)
+            return return_backtrack;
+    }
+
+    // Si toutes les instantiations précédentes aboutissent à une contradiction, alors on backtrack
+    return {false, {}};
+}
+
+pair<bool, vector<int>> CSP::fullFC(vector<int> domain_last_elts, vector<int> ordre_variables, int idx_var_introduite)
+{
+    if (ordre_variables.empty())
+    {
+        for (int i = 0; i < nVar; i++)
+            ordre_variables.push_back(i);
+    }
+
+    if (domain_last_elts.empty())
+    {
+        for (const auto& domain : Domaines)
+            domain_last_elts.push_back(static_cast<int>(domain.size()));
+    }
+
+    int var_introduite = -1;
+    if (idx_var_introduite != -1)
+        var_introduite = ordre_variables[idx_var_introduite];
+
+    domain_last_elts = FC(domain_last_elts, var_introduite);
+
+    for (int s : domain_last_elts)
+    {
+        if (s < 1)
+            return {false, {}};
+    }
+
+    if (idx_var_introduite == ordre_variables.size() - 1)
+    {
+        vector<int> instance_valide;
+        for (int i : ordre_variables)
+            instance_valide.push_back(Domaines[i][0]);
+        return {true, instance_valide};
+    }
+
+    int new_var_introduite = ordre_variables[idx_var_introduite + 1];
+
+    vector<int> new_domain_last_elts = domain_last_elts;
+    for (int i = 0; i < domain_last_elts[new_var_introduite]; i++)
+    {
+        new_domain_last_elts[new_var_introduite] = 1;
+        swap(Domaines[new_var_introduite][0],Domaines[new_var_introduite][i]);
+        auto result = fullFC(new_domain_last_elts, ordre_variables, idx_var_introduite + 1);
+        if (result.first)
+            return result;
+    }
+
+    return {false, {}};
+}
+
+pair<bool, vector<int>> CSP::MAC4(PropagationFct propagate, vector<int> domain_last_elts, vector<int> ordre_variables, int x1)
+{
+    if (ordre_variables.empty())
+    {
+        for (int i = 0; i < nVar; i++)
+            ordre_variables.push_back(i);
+    }
+
+    if (domain_last_elts.empty())
+    {
+        for (const auto& domain : Domaines)
+            domain_last_elts.push_back(static_cast<int>(domain.size()));
+    }
+
+    domain_last_elts = (this->*propagate)(domain_last_elts, x1);
 
     for (int s : domain_last_elts)
     {
@@ -318,8 +412,8 @@ pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordr
             for (int k = 0; k < old_size; k++)
             {
                 swap(Domaines[i][0],Domaines[i][k]);
-                auto result = MAC4(new_domain_last_elts,ordre_variables);
-                cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
+                auto result = MAC4(propagate,new_domain_last_elts,ordre_variables,i);
+                //cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
                 if (result.first)
                     return result;
             }
@@ -332,6 +426,13 @@ pair<bool, vector<int>> CSP::MAC4(vector<int> domain_last_elts, vector<int> ordr
             return {false, {}};
     }
 
+    domain_last_elts = AC4(domain_last_elts);
+
+    for (int s : domain_last_elts)
+    {
+        if (s != 1)
+            return {false, {}};
+    }
 
     vector<int> instance_valide;
     for (int i : ordre_variables)
