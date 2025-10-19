@@ -7,6 +7,10 @@ Constraint::Constraint(int vx1, int vx2, vector<pair<int, int>> vals)
         x1 = vx1;
         x2 = vx2;
         valeurs = vals;
+        for (auto v : vals)
+        {
+            map_valeurs.insert({this->key(v.first, v.second), true});
+        }
     }
     else
     {
@@ -15,6 +19,7 @@ Constraint::Constraint(int vx1, int vx2, vector<pair<int, int>> vals)
         for (auto v : vals)
         {
             valeurs.emplace_back(v.second, v.first);
+            map_valeurs.insert({this->key(v.second, v.first), true});
         }
     }
 }
@@ -24,6 +29,7 @@ Constraint::Constraint()
     x1 = 0;
     x2 = 0;
     valeurs = {};
+    map_valeurs;
 }
 
 void Constraint::print()
@@ -57,12 +63,15 @@ json Constraint::makeJson() const
 
 bool Constraint::verifie(int val1, int val2) const
 {
-    for (const auto &p : valeurs)
+    return map_valeurs.count(this->key(val1, val2));
+    /*
+        for (const auto &p : valeurs)
     {
         if (p.first == val1 && p.second == val2)
             return true;
     }
     return false;
+    */
 }
 
 bool Constraint::supporte(int val1, vector<int>::const_iterator begin, vector<int>::const_iterator end) const

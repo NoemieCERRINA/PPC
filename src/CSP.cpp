@@ -117,14 +117,14 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
 
 vector<int> CSP::AC3(vector<int> domain_last_elts, int x)
 {
-    vector<pair<int,int>> aTester;
+    vector<pair<int, int>> aTester;
 
     for (const auto &c : Constraints)
     {
         int x1 = c.getX1();
         int x2 = c.getX2();
-        aTester.push_back({x1,x2});
-        aTester.push_back({x2,x1});
+        aTester.push_back({x1, x2});
+        aTester.push_back({x2, x1});
     }
 
     while (!aTester.empty())
@@ -192,15 +192,16 @@ vector<int> CSP::AC3(vector<int> domain_last_elts, int x)
             }
         }
 
-        if (update){
+        if (update)
+        {
             for (int k = 0; k < nVar; k++)
             {
                 Constraint *contrainte1 = constraintMatrix[x1][k];
                 if (contrainte1 != nullptr)
-                    aTester.push_back({k,x1});
+                    aTester.push_back({k, x1});
                 Constraint *contrainte2 = constraintMatrix[k][x1];
                 if (contrainte2 != nullptr)
-                    aTester.push_back({k,x1});
+                    aTester.push_back({k, x1});
             }
         }
     }
@@ -232,9 +233,9 @@ vector<int> CSP::AC4(vector<int> domain_last_elts, int x1)
     }*/
 
     // Phase d'initialisation
-    map<tuple<int,int,int>, int> Count;
-    map<pair<int,int>, vector<pair<int,int>>> S;
-    vector<pair<int,int>> Q;
+    map<tuple<int, int, int>, int> Count;
+    map<pair<int, int>, vector<pair<int, int>>> S;
+    vector<pair<int, int>> Q;
 
     for (const auto &c : Constraints)
     {
@@ -251,20 +252,20 @@ vector<int> CSP::AC4(vector<int> domain_last_elts, int x1)
             for (int j = 0; j < new_domain_last_elts[x2]; j++)
             {
                 int v2 = d2[j];
-                if (c.verifie(v1,v2))
+                if (c.verifie(v1, v2))
                 {
                     total++;
-                    S[{x2,v2}].push_back({x1,v1});
+                    S[{x2, v2}].push_back({x1, v1});
                 }
             }
-            Count[{x1,x2,v1}] = total;
+            Count[{x1, x2, v1}] = total;
             if (total == 0)
             {
-                //cout << "Direct Support nul: <" << x1 << ", " << v1 << "> - " << x2 << "\n";
+                // cout << "Direct Support nul: <" << x1 << ", " << v1 << "> - " << x2 << "\n";
                 swap(d1[i], d1[new_domain_last_elts[x1] - 1]);
                 new_domain_last_elts[x1]--;
                 i--;
-                Q.push_back({x1,v1});
+                Q.push_back({x1, v1});
             }
         }
 
@@ -276,20 +277,20 @@ vector<int> CSP::AC4(vector<int> domain_last_elts, int x1)
             for (int j = 0; j < new_domain_last_elts[x1]; j++)
             {
                 int v1 = d1[j];
-                if (c.verifie(v1,v2))
+                if (c.verifie(v1, v2))
                 {
                     total++;
-                    S[{x1,v1}].push_back({x2,v2});
+                    S[{x1, v1}].push_back({x2, v2});
                 }
             }
-            Count[{x2,x1,v2}] = total;
+            Count[{x2, x1, v2}] = total;
             if (total == 0)
             {
-                //cout << "Indirect Support nul: <" << x2 << ", " << v2 << "> - " << x1 << "\n";
+                // cout << "Indirect Support nul: <" << x2 << ", " << v2 << "> - " << x1 << "\n";
                 swap(d2[i], d2[new_domain_last_elts[x2] - 1]);
                 new_domain_last_elts[x2]--;
                 i--;
-                Q.push_back({x2,v2});
+                Q.push_back({x2, v2});
             }
         }
     }
@@ -301,23 +302,23 @@ vector<int> CSP::AC4(vector<int> domain_last_elts, int x1)
         int v2 = Q.back().second;
         Q.pop_back();
 
-        for (auto &couple1 : S[{x2,v2}])
+        for (auto &couple1 : S[{x2, v2}])
         {
             int x1 = couple1.first;
             int v1 = couple1.second;
             vector<int> &d1 = Domaines[x1];
 
-            Count[{x1,x2,v1}]--;
+            Count[{x1, x2, v1}]--;
 
             auto it = find(d1.begin(), d1.begin() + new_domain_last_elts[x1], v1);
 
-            if (Count[{x1,x2,v1}] == 0 && it != d1.begin() + new_domain_last_elts[x1])
+            if (Count[{x1, x2, v1}] == 0 && it != d1.begin() + new_domain_last_elts[x1])
             {
-                //cout << "Propagate Support nul: <" << x1 << ", " << v1 << "> - <" << x2 << ", " << v2 << ">\n";
+                // cout << "Propagate Support nul: <" << x1 << ", " << v1 << "> - <" << x2 << ", " << v2 << ">\n";
                 auto index = distance(d1.begin(), it);
                 swap(d1[index], d1[new_domain_last_elts[x1] - 1]);
                 new_domain_last_elts[x1]--;
-                Q.push_back({x1,v1});
+                Q.push_back({x1, v1});
             }
         }
     }
@@ -344,7 +345,7 @@ vector<int> CSP::FC(vector<int> domain_last_elts, int x1)
                 int v2 = Domaines[x2][i];
                 if (!(contrainte1->verifie(v1, v2)))
                 {
-                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2]-1]);
+                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2] - 1]);
                     domain_last_elts[x2]--;
                     i--;
                 }
@@ -358,7 +359,7 @@ vector<int> CSP::FC(vector<int> domain_last_elts, int x1)
                 int v2 = Domaines[x2][i];
                 if (!(contrainte2->verifie(v2, v1)))
                 {
-                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2]-1]);
+                    swap(Domaines[x2][i], Domaines[x2][domain_last_elts[x2] - 1]);
                     domain_last_elts[x2]--;
                     i--;
                 }
@@ -434,7 +435,7 @@ pair<bool, vector<int>> CSP::fullFC(vector<int> domain_last_elts, vector<int> or
 
     if (domain_last_elts.empty())
     {
-        for (const auto& domain : Domaines)
+        for (const auto &domain : Domaines)
             domain_last_elts.push_back(static_cast<int>(domain.size()));
     }
 
@@ -464,7 +465,7 @@ pair<bool, vector<int>> CSP::fullFC(vector<int> domain_last_elts, vector<int> or
     for (int i = 0; i < domain_last_elts[new_var_introduite]; i++)
     {
         new_domain_last_elts[new_var_introduite] = 1;
-        swap(Domaines[new_var_introduite][0],Domaines[new_var_introduite][i]);
+        swap(Domaines[new_var_introduite][0], Domaines[new_var_introduite][i]);
         auto result = fullFC(new_domain_last_elts, ordre_variables, idx_var_introduite + 1);
         if (result.first)
             return result;
@@ -483,7 +484,7 @@ pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_la
 
     if (domain_last_elts.empty())
     {
-        for (const auto& domain : Domaines)
+        for (const auto &domain : Domaines)
             domain_last_elts.push_back(static_cast<int>(domain.size()));
     }
 
@@ -495,7 +496,7 @@ pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_la
             return {false, {}};
     }
 
-    for (int i : ordre_variables)
+    for (int i : ordre_variables) // backtrack avec full look ahead?
     {
         if (domain_last_elts[i] > 1)
         {
@@ -504,9 +505,9 @@ pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_la
             new_domain_last_elts[i] = 1;
             for (int k = 0; k < old_size; k++)
             {
-                swap(Domaines[i][0],Domaines[i][k]);
-                auto result = MAC(propagate,new_domain_last_elts,ordre_variables,i);
-                //cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
+                swap(Domaines[i][0], Domaines[i][k]);
+                auto result = MAC(propagate, new_domain_last_elts, ordre_variables, i);
+                // cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
                 if (result.first)
                     return result;
             }
@@ -519,7 +520,7 @@ pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_la
             return {false, {}};
     }
 
-    domain_last_elts = AC4(domain_last_elts);
+    domain_last_elts = (this->*propagate)(domain_last_elts, x1);
 
     for (int s : domain_last_elts)
     {
