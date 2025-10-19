@@ -45,6 +45,15 @@ CSP::CSP(const std::string &filename)
             Domaines[var] = values;
     }
 
+    // Reserver un espace pour constraints au prealable pour eviter de la reallocation de la memoire en cours de construction
+    size_t total_pairs = 0;
+    for (const auto &group : instance["Constraints"])
+    {
+        auto vars_list = group["vars"].get<vector<vector<int>>>();
+        total_pairs += vars_list.size();
+    }
+    Constraints.reserve(total_pairs);
+
     for (const auto &group : instance["Constraints"])
     {
         vector<vector<int>> vars_list = group["vars"].get<vector<vector<int>>>();
@@ -59,8 +68,7 @@ CSP::CSP(const std::string &filename)
             int x1 = var_pair[0];
             int x2 = var_pair[1];
 
-            Constraint c(x1, x2, allowed);
-            Constraints.push_back(c);
+            Constraints.emplace_back(x1, x2, allowed);
         }
     }
 
