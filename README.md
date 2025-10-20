@@ -13,6 +13,7 @@ Projet de Programmation par contraintes du MPRO
 - [x] - Codage d'un générateur de fichier à partir d'un CSP objet
 - [x] - Génération de fichiers tests n-reines.
 - [x] - Génération de fichiers tests nombre chromatique.
+- [ ] - Implémentation d'options pour choisir l'ordre de sélection des variables - l'ordre de sélection des valeurs.
 - [ ] - Génération d'autres fichiers tests.
 - [ ] - Codage des fonctions d'évaluations du moteur.
 - [ ] - Approfondissement (to be defined).
@@ -23,7 +24,13 @@ Projet de Programmation par contraintes du MPRO
 
 Pour compiler le code (génère un exécutable **solver**): `make`
 
-Pour exécuter le programme: `./solver <instance_file>`
+Pour exécuter le programme: `./solver <instance_file> <solving_algorithm>`
+
+Il existe 4 options pour l'algorithme de résolution:
+- Backtrack
+- FC
+- MAC3
+- MAC4
 
 ### Format de fichiers d'instances
 
