@@ -15,7 +15,7 @@ Projet de Programmation par contraintes du MPRO
 - [x] - Génération de fichiers tests nombre chromatique.
 - [ ] - Implémentation d'options pour choisir l'ordre de sélection des variables - l'ordre de sélection des valeurs.
 - [ ] - Génération d'autres fichiers tests.
-- [ ] - Codage des fonctions d'évaluations du moteur.
+- [x] - Codage des fonctions d'évaluations du moteur.
 - [ ] - Approfondissement (to be defined).
 - [ ] - Rapport de soutenance.
 - [ ] - Slides de soutenance.

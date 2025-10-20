@@ -1,0 +1,1 @@
+{"Constraints":[{"allowed":[[0,2],[2,0]],"vars":[[0,1]]},{"allowed":[[0,1],[1,0],[1,2],[2,1]],"vars":[[0,2]]},{"allowed":[[0,2],[2,0]],"vars":[[1,2]]}],"Domaines":[{"values":[0,1,2],"vars":[0]},{"values":[0,1,2],"vars":[1]},{"values":[0,1,2],"vars":[2]}],"nVar":3}

@@ -16,17 +16,22 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    CSP csp;
+    
+    /*for (int i = 1; i < 30; i++)
+    {
+        csp = Queens_generator(i);
+        csp.generate_json_instance("instances/n-queens/" + std::to_string(i) + "-queens.json");
+    }
+
+    return 0;*/
+
     string filename = argv[1];
     string algo = argv[2];
 
-    CSP csp;
     csp = CSP(filename);
     int n = 16;
-    // csp = Queens_generator(n);
-    // vector<int> domain_last_elts = csp.AC4();
     csp.print();
-    // for (int elt : domain_last_elts)
-    //    cout << elt << ", ";
 
     pair<bool, vector<int>> result;
     auto start_timer = high_resolution_clock::now();

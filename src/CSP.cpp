@@ -534,7 +534,8 @@ pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_la
 }
 
 void CSP::generate_json_instance(const std::string &filename)
-{
+{  
+    cout << filename << "\n";
     json j;
 
     j["nVar"] = nVar;
