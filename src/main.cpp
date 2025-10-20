@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
     string filename = argv[1];
 
     CSP csp;
-    // csp = CSP(filename);
+    csp = CSP(filename);
     int n = 16;
-    csp = Queens_generator(n);
+    // csp = Queens_generator(n);
     // vector<int> domain_last_elts = csp.AC4();
     csp.print();
     // for (int elt : domain_last_elts)
@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
 
     auto start_timer = high_resolution_clock::now();
 
-    auto result = csp.MAC(&CSP::AC3);
-    // auto result = csp.fullFC();
+    // auto result = csp.MAC(&CSP::AC3);
+    auto result = csp.fullFC();
 
     auto stop_timer = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(stop_timer - start_timer);
