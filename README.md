@@ -12,7 +12,7 @@ Projet de Programmation par contraintes du MPRO
 - [x] - Implémentation de FC.
 - [x] - Codage d'un générateur de fichier à partir d'un CSP objet
 - [x] - Génération de fichiers tests n-reines.
-- [ ] - Génération de fichiers tests nombre chromatique.
+- [x] - Génération de fichiers tests nombre chromatique.
 - [ ] - Génération d'autres fichiers tests.
 - [ ] - Codage des fonctions d'évaluations du moteur.
 - [ ] - Approfondissement (to be defined).

@@ -2,3 +2,4 @@ obj/
 solver*
 .vscode/
 test.json
+k_col_instances/
