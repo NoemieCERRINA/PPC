@@ -22,7 +22,7 @@ Representation du CSP
 class CSP
 {
 private:
-    enum class VariableHeuristic { IN_ORDER, SMALLEST_DOMAIN, LARGEST_DOMAIN, RANDOM };
+    enum class VariableHeuristic { IN_ORDER, SMALLEST_DOMAIN, LARGEST_DOMAIN, RANDOM }; // 0 1 2 3
 
     int nVar;                     // nombre de variables
     vector<vector<int>> Domaines; // ensemble des domaines de definition
