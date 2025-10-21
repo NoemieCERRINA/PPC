@@ -32,6 +32,12 @@ Il existe 4 options pour l'algorithme de résolution:
 - MAC3
 - MAC4
 
+Il existe 4 options pour l'heuristique de choix de sélection de variables (TODO: implement for backtrack/MAC3/MAC4 + add to executable parameters)
+- 0 - Les variables sont traitées dans l'ordre
+- 1 - Les variables sont traitées dans l'ordre de plus petit domaine
+- 2 - Les variables sont traitées dans l'ordre de plus grand domaine
+- 3 - Les variables sont traitées dans un ordre aléatoire [Défaut - en général le plus performant]
+
 ### Format de fichiers d'instances
 
 Les fichiers d'instances créés pour benchmarking sont stockés ici: [./instances](./instances/).

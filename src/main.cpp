@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     CSP csp;
     
-    /*for (int i = 1; i < 30; i++)
+    /*for (int i = 99; i < 100; i++)
     {
         csp = Queens_generator(i);
         csp.generate_json_instance("instances/n-queens/" + std::to_string(i) + "-queens.json");
@@ -31,13 +31,13 @@ int main(int argc, char *argv[])
 
     csp = CSP(filename);
     int n = 16;
-    csp.print();
+    //csp.print();
 
     pair<bool, vector<int>> result;
     auto start_timer = high_resolution_clock::now();
 
     if (algo == "backtrack") result = csp.backtrack();
-    else if (algo == "FC") result = csp.fullFC();
+    else if (algo == "FC") result = csp.new_fullFC(3);
     else if (algo == "MAC3") result = csp.MAC(&CSP::AC3);
     else if (algo == "MAC4") result = csp.MAC(&CSP::AC4);
     else

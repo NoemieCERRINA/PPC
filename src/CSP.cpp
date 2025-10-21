@@ -115,6 +115,24 @@ vector<int> CSP::reorder(vector<int> list, vector<int> order)
     return reordered;
 }
 
+int CSP::selectNextVar(const vector<int>& remaining, const vector<int>& domain_last_elts, int heuristic)
+{
+    if (heuristic == 0) // IN_ORDER
+        return remaining.front();
+    else if (heuristic == 1) // SMALLEST_DOMAIN
+    {
+        return *min_element(remaining.begin(), remaining.end(),
+                [&](int a, int b){ return domain_last_elts[a] < domain_last_elts[b]; });
+    }
+    else if (heuristic == 2) // LARGEST_DOMAIN
+    {
+        return *max_element(remaining.begin(), remaining.end(),
+                [&](int a, int b){ return domain_last_elts[a] < domain_last_elts[b]; });
+    }
+    return remaining[rand() % remaining.size()]; //RANDOM
+}
+
+
 vector<int> CSP::AC3(vector<int> domain_last_elts, int x)
 {
     vector<pair<int,int>> aTester;
@@ -472,6 +490,67 @@ pair<bool, vector<int>> CSP::fullFC(vector<int> domain_last_elts, vector<int> or
 
     return {false, {}};
 }
+
+pair<bool, vector<int>> CSP::new_fullFC(int heuristic, vector<int> domain_last_elts, vector<int> assigned_vars)
+{  
+    //cout << "Starting new Full FC\n";
+    if (domain_last_elts.empty())
+    {
+        for (const auto& domain : Domaines)
+            domain_last_elts.push_back(static_cast<int>(domain.size()));
+    }
+
+    int var_introduite = -1;
+    if (!assigned_vars.empty())
+        var_introduite = assigned_vars.back();
+
+    domain_last_elts = FC(domain_last_elts, var_introduite);
+
+    for (int s : domain_last_elts)
+    {
+        if (s < 1)
+            return {false, {}};
+    }
+    /*for (auto last_elt : domain_last_elts){
+        cout << last_elt << ", ";
+    }
+    cout << "\n";*/
+
+    if (assigned_vars.size() == nVar) {
+        vector<int> instance_valide(nVar);
+        for (int var : assigned_vars)
+            instance_valide[var] = Domaines[var][0];
+        return {true, instance_valide};
+    }
+
+
+    vector<int> remaining;
+    for (int v = 0; v < nVar; ++v)
+        if (find(assigned_vars.begin(), assigned_vars.end(), v) == assigned_vars.end())
+            remaining.push_back(v);
+
+    int next_var = selectNextVar(remaining, domain_last_elts, heuristic);
+    cout << "Next var : " << next_var << "\n";
+
+    vector<int> new_assigned = assigned_vars;
+    new_assigned.push_back(next_var);
+    /*for (auto last_elt : new_assigned){
+        cout << last_elt << ", ";
+    }
+    cout << "\n";*/
+
+    for (int i = 0; i < domain_last_elts[next_var]; ++i) {
+        vector<int> new_domain_last_elts = domain_last_elts;
+        new_domain_last_elts[next_var] = 1;
+        swap(Domaines[next_var][0], Domaines[next_var][i]);
+
+        auto result = new_fullFC(heuristic, new_domain_last_elts, new_assigned);
+        if (result.first)
+            return result;
+    }
+
+    return {false, {}};
+}   
 
 pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_last_elts, vector<int> ordre_variables, int x1)
 {
