@@ -33,7 +33,7 @@ Il existe 4 options pour l'algorithme de résolution:
 - MAC3
 - MAC4
 
-Il existe 4 options pour l'heuristique de choix de sélection de variables (TODO: implement for backtrack/MAC3/MAC4 + add to executable parameters)
+Il existe 4 options pour l'heuristique de choix de sélection de variables
 - 0 - Les variables sont traitées dans l'ordre
 - 1 - Les variables sont traitées dans l'ordre de plus petit domaine
 - 2 - Les variables sont traitées dans l'ordre de plus grand domaine
