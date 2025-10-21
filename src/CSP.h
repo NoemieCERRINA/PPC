@@ -39,14 +39,15 @@ public:
     CSP();
     void print();
     int getnVar() const;
+    vector<int> getDomainSizes() const;
 
     vector<int> AC3(vector<int> domain_last_elts = {}, int x = -1);
     vector<int> AC4(vector<int> domain_last_elts = {}, int x1 = -1);
     vector<int> FC(vector<int> domain_last_elts = {}, int x1 = -1);
 
     pair<bool, vector<int>> backtrack(vector<int> instantiation_partielle = {}, vector<int> ordre_variables = {});
-    pair<bool, vector<int>> fullFC(vector<int> domain_last_elts = {}, vector<int> ordre_variables = {}, int idx_var_introduite = -1);
-    pair<bool, vector<int>> new_fullFC(int heuristic = 3, vector<int> domain_last_elts = {}, vector<int> assigned_vars = {});
+    pair<bool, vector<int>> new_backtrack(int heuristic = 3, vector<int> assigned_vars = {}, vector<int> instantiation_partielle = {});
+    pair<bool, vector<int>> fullFC(int heuristic = 3, vector<int> domain_last_elts = {}, vector<int> assigned_vars = {});
     pair<bool, vector<int>> MAC(PropagationFct propagate = &CSP::AC4, vector<int> domain_last_elts = {}, vector<int> ordre_variables = {}, int x1 = -1);
     void generate_json_instance(const std::string &filename);
 };

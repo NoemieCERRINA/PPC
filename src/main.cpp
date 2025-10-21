@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
     pair<bool, vector<int>> result;
     auto start_timer = high_resolution_clock::now();
 
-    if (algo == "backtrack") result = csp.backtrack();
-    else if (algo == "FC") result = csp.new_fullFC(3);
+    if (algo == "backtrack") result = csp.new_backtrack();
+    else if (algo == "FC") result = csp.fullFC(3);
     else if (algo == "MAC3") result = csp.MAC(&CSP::AC3);
     else if (algo == "MAC4") result = csp.MAC(&CSP::AC4);
     else

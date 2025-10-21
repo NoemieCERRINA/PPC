@@ -103,6 +103,15 @@ int CSP::getnVar() const
     return nVar;
 }
 
+vector<int> CSP::getDomainSizes() const 
+{
+    vector<int> sizes;
+    for (const auto& d : Domaines)
+        sizes.push_back(static_cast<int>(d.size()));
+    return sizes;
+}
+
+
 vector<int> CSP::reorder(vector<int> list, vector<int> order)
 {
     // Fonction auxiliaire pour trier une liste d'entier en fonction d'un ordre donné
@@ -442,48 +451,52 @@ pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vect
     return {false, {}};
 }
 
-pair<bool, vector<int>> CSP::fullFC(vector<int> domain_last_elts, vector<int> ordre_variables, int idx_var_introduite)
+pair<bool, vector<int>> CSP::new_backtrack(int heuristic, vector<int> assigned_vars, vector<int> instantiation_partielle)
 {
-    if (ordre_variables.empty())
+
+    if (!assigned_vars.empty())
     {
+        int var_introduite = assigned_vars.back();
+        int val_introduite = instantiation_partielle.back();
+
+        for (size_t i = 0; i + 1 < instantiation_partielle.size(); i++)
+        {
+            int var_comparaison = assigned_vars[i];
+            int val_comparaison = instantiation_partielle[i];
+
+            Constraint *contrainte1 = constraintMatrix[var_introduite][var_comparaison];
+            if (contrainte1 != nullptr && !(contrainte1->verifie(val_introduite, val_comparaison)))
+                return {false, {}};
+
+            Constraint *contrainte2 = constraintMatrix[var_comparaison][var_introduite];
+            if (contrainte2 != nullptr && !(contrainte2->verifie(val_comparaison, val_introduite)))
+                return {false, {}};
+        }
+    }
+
+    if (instantiation_partielle.size() == nVar)
+    {
+        vector<int> instance_valide(nVar);
         for (int i = 0; i < nVar; i++)
-            ordre_variables.push_back(i);
-    }
-
-    if (domain_last_elts.empty())
-    {
-        for (const auto& domain : Domaines)
-            domain_last_elts.push_back(static_cast<int>(domain.size()));
-    }
-
-    int var_introduite = -1;
-    if (idx_var_introduite != -1)
-        var_introduite = ordre_variables[idx_var_introduite];
-
-    domain_last_elts = FC(domain_last_elts, var_introduite);
-
-    for (int s : domain_last_elts)
-    {
-        if (s < 1)
-            return {false, {}};
-    }
-
-    if (idx_var_introduite == ordre_variables.size() - 1)
-    {
-        vector<int> instance_valide;
-        for (int i : ordre_variables)
-            instance_valide.push_back(Domaines[i][0]);
+            instance_valide[assigned_vars[i]] = instantiation_partielle[i];
         return {true, instance_valide};
     }
 
-    int new_var_introduite = ordre_variables[idx_var_introduite + 1];
+    vector<int> remaining;
+    for (int v = 0; v < nVar; ++v)
+        if (find(assigned_vars.begin(), assigned_vars.end(), v) == assigned_vars.end())
+            remaining.push_back(v);
 
-    vector<int> new_domain_last_elts = domain_last_elts;
-    for (int i = 0; i < domain_last_elts[new_var_introduite]; i++)
-    {
-        new_domain_last_elts[new_var_introduite] = 1;
-        swap(Domaines[new_var_introduite][0],Domaines[new_var_introduite][i]);
-        auto result = fullFC(new_domain_last_elts, ordre_variables, idx_var_introduite + 1);
+    int next_var = selectNextVar(remaining, getDomainSizes(), heuristic);
+
+    for (int val : Domaines[next_var]) {
+        vector<int> new_assigned = assigned_vars;
+        vector<int> new_inst = instantiation_partielle;
+
+        new_assigned.push_back(next_var);
+        new_inst.push_back(val);
+
+        auto result = new_backtrack(heuristic, new_assigned, new_inst);
         if (result.first)
             return result;
     }
@@ -491,9 +504,8 @@ pair<bool, vector<int>> CSP::fullFC(vector<int> domain_last_elts, vector<int> or
     return {false, {}};
 }
 
-pair<bool, vector<int>> CSP::new_fullFC(int heuristic, vector<int> domain_last_elts, vector<int> assigned_vars)
+pair<bool, vector<int>> CSP::fullFC(int heuristic, vector<int> domain_last_elts, vector<int> assigned_vars)
 {  
-    //cout << "Starting new Full FC\n";
     if (domain_last_elts.empty())
     {
         for (const auto& domain : Domaines)
@@ -511,10 +523,6 @@ pair<bool, vector<int>> CSP::new_fullFC(int heuristic, vector<int> domain_last_e
         if (s < 1)
             return {false, {}};
     }
-    /*for (auto last_elt : domain_last_elts){
-        cout << last_elt << ", ";
-    }
-    cout << "\n";*/
 
     if (assigned_vars.size() == nVar) {
         vector<int> instance_valide(nVar);
@@ -530,21 +538,16 @@ pair<bool, vector<int>> CSP::new_fullFC(int heuristic, vector<int> domain_last_e
             remaining.push_back(v);
 
     int next_var = selectNextVar(remaining, domain_last_elts, heuristic);
-    cout << "Next var : " << next_var << "\n";
+    //cout << "Next var : " << next_var << "\n";
 
     vector<int> new_assigned = assigned_vars;
-    new_assigned.push_back(next_var);
-    /*for (auto last_elt : new_assigned){
-        cout << last_elt << ", ";
-    }
-    cout << "\n";*/
 
     for (int i = 0; i < domain_last_elts[next_var]; ++i) {
         vector<int> new_domain_last_elts = domain_last_elts;
         new_domain_last_elts[next_var] = 1;
         swap(Domaines[next_var][0], Domaines[next_var][i]);
 
-        auto result = new_fullFC(heuristic, new_domain_last_elts, new_assigned);
+        auto result = fullFC(heuristic, new_domain_last_elts, new_assigned);
         if (result.first)
             return result;
     }
