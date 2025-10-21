@@ -396,62 +396,7 @@ vector<int> CSP::FC(vector<int> domain_last_elts, int x1)
     return domain_last_elts;
 }
 
-pair<bool, vector<int>> CSP::backtrack(vector<int> instantiation_partielle, vector<int> ordre_variables)
-{
-    if (ordre_variables.empty())
-    {
-        for (int i = 0; i < nVar; i++)
-            ordre_variables.push_back(i);
-    }
-
-    // On récupère la dernière variable introduite et sa valeur
-    int var_introduite = -1;
-    int val_introduite = -1;
-
-    if (instantiation_partielle.size() != 0)
-    {
-        var_introduite = ordre_variables[instantiation_partielle.size() - 1];
-        val_introduite = instantiation_partielle[instantiation_partielle.size() - 1];
-    }
-
-    // On vérifie que la variable que l'on vient d'introduire ne viole aucune contrainte avec les autres variables déjà instanciées
-    for (size_t i = 0; i + 1 < instantiation_partielle.size(); i++)
-    {
-        int var_comparaison = ordre_variables[i];
-        int val_comparaison = instantiation_partielle[i];
-
-        Constraint *contrainte1 = constraintMatrix[var_introduite][var_comparaison];
-        if (contrainte1 != nullptr && !(contrainte1->verifie(val_introduite, val_comparaison)))
-            return {false, {}};
-
-        // QUESTION - Est-ce qu'il faut garder? Contraintes directionnelles/symétriques ou non? -> modif apportee a Constraint, sont construites telles que x1 < x2
-        Constraint *contrainte2 = constraintMatrix[var_comparaison][var_introduite];
-        if (contrainte2 != nullptr && !(contrainte2->verifie(val_comparaison, val_introduite)))
-            return {false, {}};
-    }
-
-    // Si on a instancié toutes les variables, alors cette instantiation est valide
-    if (instantiation_partielle.size() == ordre_variables.size())
-        return {true, reorder(instantiation_partielle, ordre_variables)};
-
-    // Sinon, on instancie récursivement une nouvelle variable dans l'ordre spécifiée avec chacune de ses valeurs possibles successivement
-    int nouvelle_var = ordre_variables[instantiation_partielle.size()];
-    for (int val : Domaines[nouvelle_var])
-    {
-        vector<int> nv_instantiation_partielle = instantiation_partielle;
-        nv_instantiation_partielle.push_back(val);
-
-        auto return_backtrack = backtrack(nv_instantiation_partielle, ordre_variables);
-
-        if (return_backtrack.first)
-            return return_backtrack;
-    }
-
-    // Si toutes les instantiations précédentes aboutissent à une contradiction, alors on backtrack
-    return {false, {}};
-}
-
-pair<bool, vector<int>> CSP::new_backtrack(int heuristic, vector<int> assigned_vars, vector<int> instantiation_partielle)
+pair<bool, vector<int>> CSP::backtrack(int heuristic, vector<int> assigned_vars, vector<int> instantiation_partielle)
 {
 
     if (!assigned_vars.empty())
@@ -496,7 +441,7 @@ pair<bool, vector<int>> CSP::new_backtrack(int heuristic, vector<int> assigned_v
         new_assigned.push_back(next_var);
         new_inst.push_back(val);
 
-        auto result = new_backtrack(heuristic, new_assigned, new_inst);
+        auto result = backtrack(heuristic, new_assigned, new_inst);
         if (result.first)
             return result;
     }
