@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
 
     if (algo == "backtrack") result = csp.backtrack(0);
     else if (algo == "FC") result = csp.fullFC(0);
-    else if (algo == "MAC3") result = csp.MAC(&CSP::AC3);
-    else if (algo == "MAC4") result = csp.MAC(&CSP::AC4);
+    else if (algo == "MAC3") result = csp.MAC(&CSP::AC3, 3);
+    else if (algo == "MAC4") result = csp.MAC(&CSP::AC4, 3);
     else
     {
         cerr << "[ERR] - Unknown algorithm: " << algo << ". Pick a value among [backtrack, FC, MAC3, MAC4]" << endl;

@@ -499,16 +499,10 @@ pair<bool, vector<int>> CSP::fullFC(int heuristic, vector<int> domain_last_elts,
     }
 
     return {false, {}};
-}   
+}
 
-pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_last_elts, vector<int> ordre_variables, int x1)
+pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, int heuristic, vector<int> domain_last_elts, vector<int> assigned_vars, int x1)
 {
-    if (ordre_variables.empty())
-    {
-        for (int i = 0; i < nVar; i++)
-            ordre_variables.push_back(i);
-    }
-
     if (domain_last_elts.empty())
     {
         for (const auto& domain : Domaines)
@@ -523,42 +517,38 @@ pair<bool, vector<int>> CSP::MAC(PropagationFct propagate, vector<int> domain_la
             return {false, {}};
     }
 
-    for (int i : ordre_variables)
+    if (assigned_vars.size() == nVar)
     {
-        if (domain_last_elts[i] > 1)
-        {
-            vector<int> new_domain_last_elts = domain_last_elts;
-            int old_size = domain_last_elts[i];
-            new_domain_last_elts[i] = 1;
-            for (int k = 0; k < old_size; k++)
-            {
-                swap(Domaines[i][0],Domaines[i][k]);
-                auto result = MAC(propagate,new_domain_last_elts,ordre_variables,i);
-                //cout << "i : " << i << " | k : " << k << " | result : " << result.first << "\n";
-                if (result.first)
-                    return result;
-            }
-        }
+        vector<int> instance_valide(nVar);
+        for (int var : assigned_vars)
+            instance_valide[var] = Domaines[var][0];
+        return {true, instance_valide};
     }
 
-    for (int s : domain_last_elts)
+    vector<int> remaining;
+    for (int v = 0; v < nVar; ++v)
+        if (find(assigned_vars.begin(), assigned_vars.end(), v) == assigned_vars.end())
+            remaining.push_back(v);
+
+    int next_var = selectNextVar(remaining, domain_last_elts, heuristic);
+
+    vector<int> new_assigned = assigned_vars;
+    new_assigned.push_back(next_var);
+
+    for (int i = 0; i < domain_last_elts[next_var]; ++i)
     {
-        if (s != 1)
-            return {false, {}};
+        vector<int> new_domain_last_elts = domain_last_elts;
+        new_domain_last_elts[next_var] = 1;
+
+        swap(Domaines[next_var][0], Domaines[next_var][i]);
+
+        auto result = MAC(propagate, heuristic, new_domain_last_elts, new_assigned, next_var);
+
+        if (result.first)
+            return result;
     }
 
-    domain_last_elts = AC4(domain_last_elts);
-
-    for (int s : domain_last_elts)
-    {
-        if (s != 1)
-            return {false, {}};
-    }
-
-    vector<int> instance_valide;
-    for (int i : ordre_variables)
-        instance_valide.push_back(Domaines[i][0]);
-    return {true, instance_valide};
+    return {false, {}};
 }
 
 void CSP::generate_json_instance(const std::string &filename)

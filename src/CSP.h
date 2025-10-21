@@ -47,7 +47,7 @@ public:
 
     pair<bool, vector<int>> backtrack(int heuristic = 3, vector<int> assigned_vars = {}, vector<int> instantiation_partielle = {});
     pair<bool, vector<int>> fullFC(int heuristic = 3, vector<int> domain_last_elts = {}, vector<int> assigned_vars = {});
-    pair<bool, vector<int>> MAC(PropagationFct propagate = &CSP::AC4, vector<int> domain_last_elts = {}, vector<int> ordre_variables = {}, int x1 = -1);
+    pair<bool, vector<int>> MAC(PropagationFct propagate = &CSP::AC4, int heuristic = 3, vector<int> domain_last_elts = {}, vector<int> assigned_vars = {}, int x1 = -1);
     void generate_json_instance(const std::string &filename);
 };
 
