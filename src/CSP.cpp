@@ -541,6 +541,7 @@ pair<bool, vector<int>> CSP::fullFC(int heuristic, vector<int> domain_last_elts,
     //cout << "Next var : " << next_var << "\n";
 
     vector<int> new_assigned = assigned_vars;
+    new_assigned.push_back(next_var);
 
     for (int i = 0; i < domain_last_elts[next_var]; ++i) {
         vector<int> new_domain_last_elts = domain_last_elts;
