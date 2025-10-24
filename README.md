@@ -12,9 +12,11 @@ Projet de Programmation par contraintes du MPRO
 - [x] - Implémentation de FC.
 - [x] - Codage d'un générateur de fichier à partir d'un CSP objet
 - [x] - Génération de fichiers tests n-reines.
-- [ ] - Génération de fichiers tests nombre chromatique.
+- [x] - Génération de fichiers tests nombre chromatique.
+- [x] - Implémentation d'options pour choisir l'ordre de sélection des variables.
+- [ ] - Implémentation d'options pour choisir l'ordre de sélection des valeurs.
 - [ ] - Génération d'autres fichiers tests.
-- [ ] - Codage des fonctions d'évaluations du moteur.
+- [x] - Codage des fonctions d'évaluations du moteur.
 - [ ] - Approfondissement (to be defined).
 - [ ] - Rapport de soutenance.
 - [ ] - Slides de soutenance.
@@ -23,7 +25,19 @@ Projet de Programmation par contraintes du MPRO
 
 Pour compiler le code (génère un exécutable **solver**): `make`
 
-Pour exécuter le programme: `./solver <instance_file>`
+Pour exécuter le programme: `./solver <instance_file> <solving_algorithm> <variable_heuristic=optional>`
+
+Il existe 4 options pour l'algorithme de résolution:
+- Backtrack
+- FC
+- MAC3
+- MAC4
+
+Il existe 4 options pour l'heuristique de choix de sélection de variables
+- 0 - Les variables sont traitées dans l'ordre
+- 1 - Les variables sont traitées dans l'ordre de plus petit domaine
+- 2 - Les variables sont traitées dans l'ordre de plus grand domaine
+- 3 - Les variables sont traitées dans un ordre aléatoire [Défaut - en général le plus performant]
 
 ### Format de fichiers d'instances
 
