@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <string.h>
+#include <chrono>
 #include "Constraint.h"
 #include "CSP.h"
 #include "utils.h"

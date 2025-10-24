@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -14,10 +15,13 @@ class Constraint
 private:
     int x1, x2;                     // Indice des variables concernees par la contrainte
     vector<pair<int, int>> valeurs; // Vecteur des valeurs autorisees pour la paire
+    unordered_set<uint64_t> map_valeurs;
 
 public:
     Constraint(int vx1, int vx2, vector<pair<int, int>> vals);
     Constraint();
+
+    uint64_t key(int a, int b) const { return (static_cast<uint64_t>(a) << 32) | static_cast<uint64_t>(b); }
 
     void print();
 
