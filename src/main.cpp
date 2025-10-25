@@ -18,14 +18,16 @@ int main(int argc, char *argv[])
     }
 
     CSP csp;
-    
-    /*for (int i = 99; i < 100; i++)
+
+    /*
+    for (int i = 100; i < 101; i++)
     {
         csp = Queens_generator(i);
         csp.generate_json_instance("instances/n-queens/" + std::to_string(i) + "-queens.json");
     }
 
-    return 0;*/
+    return 0;
+    */
 
     string filename = argv[1];
     string algo = argv[2];
@@ -36,17 +38,29 @@ int main(int argc, char *argv[])
         variable_heuristic = stoi(argv[3]);
     }
 
+    auto start_timer_init = high_resolution_clock::now();
     csp = CSP(filename);
     int n = 16;
-    //csp.print();
+    // csp.print();
 
     pair<bool, vector<int>> result;
+
+    auto stop_timer_init = high_resolution_clock::now();
+
+    auto duration_init = duration_cast<milliseconds>(stop_timer_init - start_timer_init);
+
+    cout << "Temps d'initialisation: " << duration_init.count() / 1000.0 << " secondes" << endl;
+
     auto start_timer = high_resolution_clock::now();
 
-    if (algo == "backtrack") result = csp.backtrack(variable_heuristic);
-    else if (algo == "FC") result = csp.fullFC(variable_heuristic);
-    else if (algo == "MAC3") result = csp.MAC(&CSP::AC3, variable_heuristic);
-    else if (algo == "MAC4") result = csp.MAC(&CSP::AC4, variable_heuristic);
+    if (algo == "backtrack")
+        result = csp.backtrack(variable_heuristic);
+    else if (algo == "FC")
+        result = csp.fullFC(variable_heuristic);
+    else if (algo == "MAC3")
+        result = csp.MAC(&CSP::AC3, variable_heuristic);
+    else if (algo == "MAC4")
+        result = csp.MAC(&CSP::AC4, variable_heuristic);
     else
     {
         cerr << "[ERR] - Unknown algorithm: " << algo << ". Pick a value among [backtrack, FC, MAC3, MAC4]" << endl;
@@ -65,7 +79,7 @@ int main(int argc, char *argv[])
         cout << endl;
     }
 
-    csp.generate_json_instance("instances/test.json");
+    // csp.generate_json_instance("instances/test.json");
 
     return 0;
 }

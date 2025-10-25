@@ -1,0 +1,41 @@
+\documentclass[14pt]{article}
+
+\usepackage{preamble}
+\usepackage{ppc}
+
+\AtBeginDocument{\addtocontents{toc}{\protect\thispagestyle{fancy}}}
+
+%Mise en page en mode fancy : en-têtes et pieds de pages puis définition des en-têtes et pieds de pages%
+\pagestyle{fancy}
+\cfoot[\thepage]{\thepage}
+\begin{document}
+
+
+%Trait en bas et en haut de la page (entre en-tête et texte et texte et pied de page)%
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\vspace{0cm}              %espace en hauteur (hspace pour la largeur)%
+\setstretch{1.4}
+
+%DEBUT DU DOCUMENT%
+
+\import{./}{Front_page.tex}
+
+\clearpage
+\thispagestyle{fancy}
+\selectlanguage{french}
+\tableofcontents
+\thispagestyle{fancy}      %Mise en page de la 1ère page en mode fancy%
+
+\clearpage
+
+\section{Choix d'implémentation}
+
+Nous avons implémenté notre solveur en C++.
+
+\subsection{Structure des données}
+
+%TODO%
+
+\end{document}

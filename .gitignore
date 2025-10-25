@@ -3,3 +3,4 @@ solver*
 .vscode/
 test.json
 k_col_instances/
+100-queens.json

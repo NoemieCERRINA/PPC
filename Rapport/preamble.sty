@@ -1,0 +1,102 @@
+\ProvidesPackage{preamble}
+
+%Packages à charger (sauf thmbox qui changent les environnements théorèmes)%
+\usepackage{standalone} %allows multi-file project
+\usepackage{import}
+
+\usepackage{comment}
+\usepackage[utf8]{inputenc}        %accents bien meilleurs%
+\usepackage[T1]{fontenc}            %polices et fontes%
+\usepackage{ragged2e}
+\usepackage{pifont}
+\usepackage[french]{babel}       %ponctuation française%
+\usepackage{amsfonts,amsmath,amssymb,amsthm,amscd,shadow}      %symboles maths, environnements théorème, diagrammes commutatifs, boite shabox, etc...%
+\usepackage[]{algorithm2e}            % for pretty pseudo code
+\usepackage{stmaryrd}                %quelques signes maths, notamment lettres doublées pour ensembles%
+\usepackage{graphicx}                  %importation d'images%
+\usepackage{subcaption}
+\usepackage{fancybox}                %quelques boîtes en plus%
+\usepackage{fancyhdr}                 %pour une mise en page plus maîtrisée, avec en-tête et pieds de pages notamment%
+\usepackage{color}                        %pour définir des couleurs%
+\usepackage[svgnames]{xcolor}             %Pour plus de couleurs dans la vie%
+\usepackage{variations}                %pour les tableaux de signe et de variations%
+\usepackage{tikz,tkz-tab}              %pour les dessins http://www.bakoma-tex.com/doc/latex/tkz-tab/tkzdoc-tab.pdf%
+\usepackage{colortbl}                    %pour colorier les tableaux%
+\usepackage{diagbox}
+\usepackage{placeins}
+
+\usepackage{enumitem}
+\setlist[itemize,1]{label=--}       % First-level bullet
+\setlist[itemize,2]{label=-}       % Second-level bullet
+\setlist[itemize,3]{label=*}       % Third-level bullet
+
+\usepackage{setspace,letterspace}
+\usepackage{pstricks,pstricks-add,pst-math,pst-xkey,pst-text}
+\usepackage{pgfplots}                   %pour les figures%
+\usepackage{mathrsfs}
+\usepackage{longtable, array}            %pour les tableaux longs sur plusieurs pages et les tableaux plus cools%
+\usepackage{float}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue]{hyperref}
+\usepackage{caption}
+\usepackage[all]{hypcap}
+\captionsetup[table]{skip = 12pt}
+
+\usepackage{xstring}            %pour les manipulations de chaînes de caractères%
+\usepackage{blindtext}            %lorem ipsum%
+\usepackage{dutchcal} % \mathcal: also small letters. \mathbcal = bold ones. 
+\usepackage{tocloft}
+\usepackage{csquotes}
+\usepackage[backend=biber, style=authoryear]{biblatex} %biblio%
+
+
+%Ajustement des librairies d'images%
+\pgfplotsset{compat=1.15}
+\usetikzlibrary{arrows, backgrounds}
+
+% date{} va avec le titre créé par maketitle %
+% title{} rajouter maketitle dans le corps pour le créer%
+
+%Définition des environnements (theo, prop, lemm, defi, rema, demo), d'abord ceux sans thmbox puis ceux avec%
+\theoremstyle{plain}    %caractères italiques mais titre droit%
+\newenvironment{demo}[1][]{\noindent  \textbf{Démonstration{#1}} \\ \footnotesize \color{black} }{\normalsize \color{black}}
+\newenvironment{demos}[1][]{\noindent  \textbf{Démonstrations{#1}} \\ \footnotesize \color{black}  }{\normalsize \color{black}}
+\newenvironment{metho}[1][]{\noindent  \textbf{Méthode{#1}} \\  \color{black}  }{\color{black}}
+\newenvironment{Exemple}[1][]{\color{black} \noindent \textbf{Exemple {#1}} \\ \small   }{\normalsize \color{black}}
+\newenvironment{Exemples}[1][]{ \color{black} \noindent \textbf{Exemples {#1}}  \begin{enumerate} \small  }{\end{enumerate} \normalsize \color{black}}
+\newenvironment{Contre-exemple}[1][]{\color{blue} \noindent  \textbf{Contre-exemple {#1}} \\ \small   }{\normalsize \color{black}}
+\newenvironment{Exemple et contre-exemple}[1][]{\color{blue} \noindent  \textbf{Exemple et contre-exemple {#1}} \\ \small   }{\normalsize \color{black}}
+\newenvironment{rema}[1][]{\color{black} \noindent  \textbf{Remarque :{#1}} \\ \small }{\normalsize \color{black} }
+\newenvironment{remas}[1][]{\color{black} \noindent  \textbf{Remarques{#1}} \begin{enumerate} \small }{\end{enumerate} \normalsize \color{black} }
+
+
+\theoremstyle{definition}  %caractères droits%
+\newtheorem{exo}{Exercice}
+\theoremstyle{remark}  %caractères droits mais titre italique%
+
+
+\usepackage{thmbox}      %changements des paramètres : voir http://iml.univ-mrs.fr/~beffara/soft/thmbox.pdf %
+
+\theoremstyle{definition}  %caractères droits%
+\newtheorem[L,nocut,bodystyle=\upshape\noindent]{theo}{Théorème}
+\newtheorem[L,nocut,bodystyle=\upshape\noindent]{defitheo}{Définition - Théorème}
+\newtheorem[L,nocut,bodystyle=\upshape\noindent]{prop}[theo]{Propriété}
+\newtheorem[L,nocut,bodystyle=\upshape\noindent]{props}[theo]{Propriétés}
+\newtheorem[L,nocut,bodystyle=\upshape\noindent]{coro}[theo]{Corollaire}
+\newtheorem[L,nocut,bodystyle=\upshape\noindent]{lemm}{Lemme}
+\newtheorem[nocut,bodystyle=\upshape\noindent]{defi}{Définition}
+
+\thmboxoptions{titlestyle=\textup{#1}}
+
+\newtheorem[nocut]{defis}{Définitions}
+
+%Nouvelles commandes qui facilitent la vie!%
+\newcommand{\cd}[1]{\shadowbox{\begin{minipage}{\textwidth} #1 \end{minipage}}} %Boîte avec une ombre
+\newcommand{\fb}[1]{\fbox{\begin{minipage}{\textwidth} #1 \end{minipage}}} %Boîte sans l'ombre
+\newcommand{\lbe}{\llbracket} %crochet gauche doublé pour les entiers
+\newcommand{\rbe}{\rrbracket} %crochet droit doublé pour les entiers
+
+\renewcommand{\thesection}{\Roman{section}.}
+\renewcommand{\thesubsection}{\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\alph{subsubsection}.}
+\renewcommand{\cftsecnumwidth}{3em}   % for sections
+\allowdisplaybreaks
