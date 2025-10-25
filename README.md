@@ -18,7 +18,16 @@ Projet de Programmation par contraintes du MPRO
 - [ ] - Génération d'autres fichiers tests.
 - [x] - Codage des fonctions d'évaluations du moteur.
 - [ ] - Approfondissement (to be defined).
+
+
 - [ ] - Rapport de soutenance.
+- [ ] - [Rapport] - Présentation des problèmes.
+- [ ] - [Rapport] - Présentation des choix d'implémentation (représentation, et algorithmie).
+- [ ] - [Rapport] - Evaluation du solveur par méthode sur n-queens (backtrack, FC, MAC3, MAC4) et comparaison avec solveur commercial.
+- [ ] - [Rapport] - Evaluation de l'heuristique de choix de variables sur n-queens pour la méthode la plus performante.
+- [ ] - [Rapport] - Identification de problèmes que notre solveur ne sait pas résoudre en temps raisonnable (là ou un solveur commercial y parvient).
+
+
 - [ ] - Slides de soutenance.
 
 ### Exécution
