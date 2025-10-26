@@ -59,13 +59,61 @@ Afin de résoudre des CSP binaires, nous les avons représenté dans notre solve
 
 \subsection{Représentation fichier}
 
-%TODO%
-On présente dans cette section le format de données d'entrée fournies au solveur, et une critique quant à l'utilisation mémoire d'un tel format.
+Afin de standardiser les entrées fournies à notre solveur, on a proposé un format standardisé de fichier d'entrée. Le solveur prend ainsi en entrée un fichier .json dont la structure est décrite ci-dessous:
+
+\begin{verbatim}
+	{   "nVar": 2,
+	    "Domaines": [{   "vars": [0,1], "values": [0,1]    }],
+	    "Constraints": [{   "vars": [[1,0]], "allowed": [[1,1]]    }]}
+\end{verbatim}
+
+C'est une description en extension des contraintes binaires de notre CSP, dans laquelle on s'autorise toutefois à réunir les variables qui possèdent les mêmes domaines, ainsi que les couples de variables possédant les mêmes contraintes. Une telle description en extension du problème atteint rapidement ses limites en terme de taille mémoire. Ci-dessous le nombre d'octets nécessaire pour représenter n-queens pour différentes valeurs de n.
+
+\begin{longtable}{|c|c|}
+	\hline
+	$n$ & Taille mémoire (Mo) \\
+	\hline
+	\endfirsthead
+	
+	$n$ & Taille mémoire (Mo) \\
+	\hline
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\hline
+	\endlastfoot
+	
+	10  & 0.1 \\
+	25  & 1.2 \\
+	50  & 22.2 \\
+	100  & 377.2 \\
+\end{longtable}
+
+Lorsqu'on double la valeur de n, on augmente la taille mémoire par un facteur 20 environ. Il devient rapidement déraisonnable de souhaiter représenter de tels problèmes en extension pour de plus grande valeurs de n. En pratique on se limitera à n=100 pour les instances de n-reines considérées plus bas. On constatera qu'à priori notre solveur pourrait résoudre des instances de n-reines de taille plus grande, mais qu'alors le temps de chargement des données en mémoire devient très important.
 
 \subsection{Implémentation d'algorithmes}
 
-%TODO%
-On présente dans cette section quelques choix originaux d'implémentation des algorithmes de résolution d'un CSP, et les raisons justifiant ces choix.
+Parmi les méthodes présentées dans le cours, on a choisi d'implémenter les suivantes :
+\begin{itemize}
+	\item Backtrack \textbf{[Bck]} - On vérifie simplement que la nouvelle variable instanciée ne viole aucune des contraintes portant sur des variables déjà instanciées.
+	\item Forward Checking \textbf{[FC]} - On met à jour le domaine de toutes les variables à partir de la nouvelle variable instanciée.
+	\item Maintain Arc Consistency \textbf{[MAC3]} et \textbf{[MAC4]} - On met à jour le domaine de toutes les variables à partir de la nouvelle variable instanciée, puis on propage jusqu'à ce que toutes les valeurs soient supportées.
+\end{itemize}
+
+Dans chacune des méthodes présentées ci-dessus, on explore l'arbre d'instanciation des variables en profondeur. C'est à dire qu'une fois qu'on a assigné une valeur à une variable, on explore toutes les possibilités pour cette assignation partielle avant de potentiellement assigner une autre valeur à cette variable. Toutes les méthodes sont implémentées de manière récursive, et suivent les étapes suivantes :
+\begin{enumerate}
+	\item \textbf{Mise à jour des domaines} - Via un des algorithmes présentés ci-dessus.
+	\item \textbf{Backtrack 1} - Vérifier si un des domaines devient vide suite à l'instanciation de la dernière variable.
+	\item \textbf{Choix d'une variable à instancier} - Différentes heuristiques de choix de variable possibles.
+	\item \textbf{Itération sur les valeurs} - Retourner VRAI si on obtient une solution réalisable pour une des valeurs.
+	\item \textbf{Backtrack 2} - Retourner FAUX si aucune des valeurs ne permet d'aboutir à une solution réalisable.
+\end{enumerate}
+
+Au vu du nombre important d'appels récursif de la méthode de résolution, la question de la représentation mémoire des domaines à chaque étape est primordiale, pour éviter de copier l'ensemble des domaines en chaque nœud de l'arbre. Comme suggéré durant le cours, nous avons choisi de conserver, pour chaque variable, un seul vecteur des domaines global en mémoire, et de passer comme paramètre de la fonction l'indice du dernier élément \textit{lastElt} du domaine dans ce vecteur. Lorsqu'on retire un élément du domaine, on échange en pratique cet élément avec l'élément d'indice \textit{lastElt - 1}, puis on diminue la valeur de \textit{lastElt} de 1. 
+
+\clearpage
 
 \section{Évaluation du solveur}
 

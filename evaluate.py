@@ -1,7 +1,50 @@
 import subprocess
 import re
+import os
+import json
+
+def gen_n_queens(n):
+    
+    filename = f"instances/test/{n}-queens.json"
+
+    if not os.path.isdir("instances/test"):
+        os.makedirs("instances/test")
+
+    if not os.path.isfile(filename):
+
+        edges = []
+        
+        for i in range(n):
+            for j in range(i+1,n):
+                edges.append([i,j])
+        
+        allowed = []
+
+        for [i,j] in edges:
+            new_edge = []
+            for vXi in range(n):
+                for vXj in range(n):
+                    if (vXi != vXj and vXi + i != vXj + j and vXi - i != vXj - j):
+                        new_edge.append([vXi,vXj])
+            allowed.append(new_edge)
+
+        dict_json = {
+            "nVar": n,
+            "Domaines": [{"vars": list(range(n)), "values": list(range(n))}],
+            "Constraints": [{"vars": [edges[i]], "allowed": allowed[i]} for i in range(len(edges))]
+            }
+
+        with open(filename, "w") as f:
+            json.dump(dict_json, f, separators=(",", ":"), ensure_ascii=False)
+
+    return filename
 
 def main():
+
+    liste = [10,25,50,100]
+    for elt in liste:
+        gen_n_queens(elt)
+    return
 
     executable = "./solver"
     instance_path = "instances/n-queens/"
