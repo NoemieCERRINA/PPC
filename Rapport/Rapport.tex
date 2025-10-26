@@ -51,6 +51,29 @@ Afin de standardiser les entrées fournies à notre solveur, on a proposé un fo
 
 C'est une description en extension des contraintes binaires de notre CSP, dans laquelle on s'autorise toutefois à réunir les variables qui possèdent les mêmes domaines, ainsi que les couples de variables possédant les mêmes contraintes. Une telle description en extension du problème atteint rapidement ses limites en terme de taille mémoire. Ci-dessous le nombre d'octets nécessaire pour représenter n-queens pour différentes valeurs de n.
 
+\begin{longtable}{|c|c|}
+	\hline
+	$n$ & Taille mémoire (Mo) \\
+	\hline
+	\endfirsthead
+	
+	$n$ & Taille mémoire (Mo) \\
+	\hline
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\hline
+	\endlastfoot
+	
+	10  & 0.1 \\
+	25  & 1.2 \\
+	50  & 22.2 \\
+	100  & 377.2 \\
+\end{longtable}
+
+Lorsqu'on double la valeur de n, on augmente la taille mémoire par un facteur 20 environ. Il devient rapidement déraisonnable de souhaiter représenter de tels problèmes en extension pour de plus grande valeurs de n. En pratique on se limitera à n=100 pour les instances de n-reines considérées plus bas.
 
 
 \subsection{Implémentation d'algorithmes}
