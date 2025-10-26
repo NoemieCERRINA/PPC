@@ -41,13 +41,24 @@ On présente dans cette section les choix de représentation mémoire d'un CSP b
 
 \subsection{Représentation fichier}
 
-%TODO%
-On présente dans cette section le format de données d'entrée fournies au solveur, et une critique quant à l'utilisation mémoire d'un tel format.
+Afin de standardiser les entrées fournies à notre solveur, on a proposé un format standardisé de fichier d'entrée. Le solveur prend ainsi en entrée un fichier .json dont la structure est décrite ci-dessous:
+
+\begin{verbatim}
+	{   "nVar": 2,
+	    "Domaines": [{   "vars": [0,1], "values": [0,1]    }],
+	    "Constraints": [{   "vars": [[1,0]], "allowed": [[1,1]]    }]}
+\end{verbatim}
+
+C'est une description en extension des contraintes binaires de notre CSP, dans laquelle on s'autorise toutefois à réunir les variables qui possèdent les mêmes domaines, ainsi que les couples de variables possédant les mêmes contraintes. Une telle description en extension du problème atteint rapidement ses limites en terme de taille mémoire. Ci-dessous le nombre d'octets nécessaire pour représenter n-queens pour différentes valeurs de n.
+
+
 
 \subsection{Implémentation d'algorithmes}
 
 %TODO%
 On présente dans cette section quelques choix originaux d'implémentation des algorithmes de résolution d'un CSP, et les raisons justifiant ces choix.
+
+\clearpage
 
 \section{Évaluation du solveur}
 
