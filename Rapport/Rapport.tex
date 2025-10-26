@@ -36,8 +36,26 @@ Nous avons implémenté notre solveur en C++.
 
 \subsection{Structure des données}
 
-%TODO%
-On présente dans cette section les choix de représentation mémoire d'un CSP binaire, et les raisons justifiant ces choix.
+\subsubsection{Structure des contraintes} \label{Structure des contraintes}
+Chaque contrainte est modélisée par un objet de classe \texttt{Constraint} qui contient les informations suivantes:
+\begin{itemize}
+    \item Les indices des variables concernées par la contrainte. Notre solveur ne prenant que des CSP binaires en entrée, il s'agit donc de deux variables entières et ordonnées.
+    \item Une liste des paires de valeurs autorisées pour ces variables, sous forme de vecteur de paires d'entiers.
+    \item Un dictionnaire de clés où chaque clé correspond à une paire de valeurs autorisées dans le domaine des variables considérées.
+\end{itemize}
+
+La liste des paires de valeurs autorisées, implémentée initialement de manière naïve ne permettait la vérification rapide du support d'une variable par une autre. D'où la construction du dictionnaire qui permet quant à lui l'accès en temps constant à la réponse à la question "La paire de variables $x_i$ et $x_j$ peut-elle prendre les valeurs $(v_i,v_j)$ en respectant la contrainte $C(x_i,x_j)$?"
+
+\subsubsection{Structure du CSP}
+
+Afin de résoudre des CSP binaires, nous les avons représenté dans notre solveur à l'aide d'une classe CSP contenant les informations suivantes:
+
+\begin{itemize}
+    \item Le nombre de variables du problème sous la forme d'un entier.
+    \item Une liste des des domaines de chaque variable. Chaque domaine est un entier correspondant aux valeurs autorisées pour chaque variable.
+    \item Un vecteur de contraintes, où chaque contrainte est un objet de la classe contraintes décrite dans la section \ref{Structure des contraintes}.
+    \item Une matrice des contraintes, où chaque élément en $(i,j)$ est soit un pointeur nul s'il n'existe pas de contrainte entre la variable $x_i$ et $x_j$, soit un pointeur vers la contrainte correspondante. Cette matrice permet l'accès en temps constant à la contrainte entre deux variables $x_i$ et $x_j$ données.
+\end{itemize}
 
 \subsection{Représentation fichier}
 
