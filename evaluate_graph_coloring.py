@@ -155,8 +155,8 @@ def main():
                     algo_results["solve_time"].append(-1)
                     algo_results["total_time"].append(timeout_seconds)
                     fail_count += 1
-                    #if fail_count == 10:
-                        #break
+                    if fail_count == 10:
+                        break
             results[key] = algo_results
     
 
