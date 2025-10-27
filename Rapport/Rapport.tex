@@ -34,6 +34,10 @@
 
 Nous avons implémenté notre solveur en C++.
 
+Le code, et instructions d'utilisation, est accessible via le lien suivant:
+
+ \href{https://github.com/NoemieCERRINA/PPC}{https://github.com/NoemieCERRINA/PPC}
+
 \subsection{Structure des données}
 
 \subsubsection{Structure des contraintes} \label{Structure des contraintes}
@@ -186,7 +190,7 @@ Le graphique ci-dessous montre le nombre d'instances de k-coloriage résolues en
 
 Sur l'ensemble des instances considérées, la méthode [MAC4] est à nouveau celle qui a les plus mauvaises performances, et [FC] celle qui a les meilleures performances. Une fois encore, le solveur [CP-SAT] a de bien meilleures performances, mais échoue néanmoins à résoudre les deux instances les plus difficiles en moins de 30 secondes.
 
-\subsection{Évaluation du choix de sélection de variable}
+\subsection{[Approfondissement] Évaluation du choix de sélection de variable}
 
 Dans chacune de nos méthodes de résolution, nous avons employé différentes heuristiques de choix de variables à instancier à chaque étape. Ces méthodes influent fortement sur l'efficacité de l'algorithme.
 
@@ -195,22 +199,22 @@ Dans chacune de nos méthodes de résolution, nous avons employé différentes h
 %TODO%
 Quatre méthodes de choix de variables ont été implémentées dans notre solveur:
 \begin{itemize}
-	\item \textbf{h0} - Ordre d'entrée - L'ordre initial dans lequel les variables sont données au solveur. Ce choix par défaut ne signifie quelque chose que si l'ordre donné initialiament a un sens vis-à-vis du problème.
-	\item \textbf{h1} - Plus petit domaine - A chaque étape, la variable avec le plus petit domaine de définition est choisie.
-	\item \textbf{h2} - Plus grand domaine - A chaque étape, la variable avec le plus grand domaine de définition est choisie.
+	\item \textbf{h0} - Ordre d'entrée - L'ordre initial dans lequel les variables sont données au solveur. Ce choix par défaut ne signifie quelque chose que si l'ordre donné initialement a un sens vis-à-vis du problème.
+	\item \textbf{h1} - Plus petit domaine - A chaque étape, la variable avec le plus petit domaine est choisie.
+	\item \textbf{h2} - Plus grand domaine - A chaque étape, la variable avec le plus grand domaine est choisie.
 	\item \textbf{h3} - Au hasard - A chaque étape, une variable parmi les variables restantes est choisie au hasard avec une probabilité uniforme sur l'ensemble des variables restantes.
 \end{itemize}
 
 
 \subsubsection{Évaluation sur n-reines}
 
-Evaluons nos différentes heuristiques uniquement sur les méthodes [FC] et [MAC4] qui étaient nos méthodes les plus efficaces de résolution et comparons avec les performances du solveur [CP-SAT] comme dans la partie précédente.
+Évaluons nos différentes heuristiques uniquement sur les méthodes [FC] et [MAC4] qui étaient nos méthodes les plus efficaces de résolution et comparons avec les performances du solveur [CP-SAT] comme dans la partie précédente.
 
-Nous observons sur la figure \ref{fig:n-queens-h1} que sur le problème des n-reines, l'heuristique de choix influe fortement sur la performance de nos algorithmes. [FC] demeure significativement plus performant que [MAC] lorsque la même heuristique de choix est appliquée. Cependant un mauvais choix de variable peut suffisamment pénaliser pour un algorithme au premier abord plus efficace comme le montre la mauvaise performance de [FC] avec l'heuristique de choix du plus grand domaine (h2).
+Nous observons sur la figure \ref{fig:n-queens-h1} que sur le problème des n-reines, l'heuristique de choix influe fortement sur la performance de nos algorithmes. [FC] demeure significativement plus performant que [MAC] lorsque la même heuristique de choix est appliquée. Cependant un mauvais choix de variable peut pénaliser un algorithme supposé plus efficace comme le montre la mauvaise performance de [FC] avec l'heuristique de choix du plus grand domaine (h2).
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.8\textwidth]{Images/n-queens-h-MAC-FC.png}
+	\includegraphics[width=0.77\textwidth]{Images/n-queens-h-MAC-FC.png}
 	\caption{Nombre d'instances de n-queens résolues par [FC] et [MAC4] en fonction de l'heuristique de choix}
 	\label{fig:n-queens-h1}
 \end{figure}
@@ -243,17 +247,17 @@ Le solveur [CP-SAT] résout l'intégralité de nos instances en moins d'un dixi�
 	\label{fig:coloriage-h}
 \end{figure}
 
-On maintient sur la figure \ref{fig:coloriage-h} les mêmes observations sur l'importance de l'heuristique de choix sur l'efficacité de nos algorithmes effectuées dans la partie précédente: [FC] demeure significativement plus performant que [MAC] avec une heuristique de choix identique mais mais un mauvais choix de variable peut suffisamment pénaliser pour un algorithme plus efficace pour qu'il devienne moins bon qu'un autre avec une meilleure heuristique.
+On maintient sur la figure \ref{fig:coloriage-h} les mêmes observations sur l'importance de l'heuristique de choix sur l'efficacité de nos algorithmes effectuées dans la partie précédente: [FC] demeure significativement plus performant que [MAC] avec une heuristique de choix identique mais un mauvais choix de variable peut suffisamment pénaliser un algorithme supposé efficace pour qu'il devienne moins bon qu'un autre avec une meilleure heuristique.
 
 En se penchant plus spécifiquement sur les performances d'une heuristique de choix avec notre meilleur algorithme [FC], on observe:
 \begin{itemize}
-	\item \textbf{h2} est toujours une mauvaise heuristique de choix, ce qui est cohérent avec l'intuition que l'on peut s'en faire, en choisissant la variable la moins contrainte à tôt dans notre recherche, on a plus de chances de tomber sur une instanciation infaisable et de devoir remonter haut dans l'arbre.
+	\item \textbf{h2} est toujours une mauvaise heuristique de choix, ce qui est cohérent avec l'intuition que l'on peut s'en faire, en choisissant la variable la moins contrainte tôt dans notre recherche, on a plus de chances de tomber sur une instanciation infaisable et de devoir remonter haut dans l'arbre.
 	\item \textbf{h0} demeure également moyenne, cette performance est uniquement due à la forme des instances qui nous sont données initialement, cette heuristique est celle qu'il faut réussir à vaincre ici avec les nouvelles introduites.
-	\item L'heuristique aléatoire \textbf{h3} quant-à-elle perd en efficacité ici, elle se comporte moins bien que celle du plus grand domaine. Contrairement au problème des n-reines, où toutes les variables se contraignent deux-à-deux, dans le cas du coloriage, la matrice des contraintes est beaucoup plus éparse. Celà explique sans doute l'inefficacité du choix aléatoire des variables, car nous nous baladons alors dans le graphe initial indépendamment de sa structure de départ, qui est au coeur du problème.
+	\item L'heuristique aléatoire \textbf{h3} quant-à-elle perd en efficacité ici, elle se comporte moins bien que celle du plus grand domaine. Contrairement au problème des n-reines, où toutes les variables se contraignent deux-à-deux, dans le cas du coloriage, la matrice des contraintes est beaucoup plus éparse. Cela explique sans doute l'inefficacité du choix aléatoire des variables, car nous nous baladons alors dans le graphe initial indépendamment de sa structure de départ, qui est au cœur du problème.
 	\item L'heuristique la plus efficace demeure \textbf{h1}, celle du plus petit domaine.
 \end{itemize}
 
-Nous observons l'efficacité des différentes heuristiques de choix varie grandement en fonction de la structure du problème que l'on souhaite résoudre. Celà pourrait être une piste d'approfondissement de notre solveur.
+Nous observons que l'efficacité des différentes heuristiques de choix varie grandement en fonction de la structure du problème que l'on souhaite résoudre. Cela pourrait être une piste d'approfondissement de notre solveur.
 
 \clearpage
 
