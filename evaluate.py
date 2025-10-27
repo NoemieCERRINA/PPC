@@ -46,7 +46,7 @@ def gen_n_queens(n):
     return filename
 
 def solve_with_or_tools(filename, timeout=30):
-    
+
     with open(filename, "r") as f:
         data = json.load(f)
 
@@ -73,9 +73,10 @@ def solve_with_or_tools(filename, timeout=30):
                 )
 
     for constraint in data["Constraints"]:
-        vars_pair = constraint["vars"][0]
+        vars_pairs = constraint["vars"]
         allowed_tuples = constraint["allowed"]
-        model.AddAllowedAssignments([X[vars_pair[0]], X[vars_pair[1]]], allowed_tuples)
+        for vars_pair in vars_pairs:
+            model.AddAllowedAssignments([X[vars_pair[0]], X[vars_pair[1]]], allowed_tuples)
 
     model.AddDecisionStrategy(
         X,
@@ -168,25 +169,64 @@ def save_results_to_csv(results, filename, start_instance, end_instance):
                 row.append(total_times[i] if i < len(total_times) else "-1")
             writer.writerow(row)
 
+def sort_instances_by_nVar(folder_path="instances/graph_coloring"):
+    # On parcourt tous les fichiers du dossier
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".json"):
+            file_path = os.path.join(folder_path, filename)
+
+            try:
+                # Lecture du JSON
+                with open(file_path, "r") as f:
+                    data = json.load(f)
+
+                # Vérifie que le champ nVar existe
+                if "nVar" in data:
+                    nVar = data["nVar"]
+                    # Nouveau nom de fichier : ex. 50_le450_5a.col.json
+                    new_filename = f"{nVar}_{filename}"
+
+                    new_path = os.path.join(folder_path, new_filename)
+
+                    # On évite d’écraser un fichier existant
+                    if not os.path.exists(new_path):
+                        os.rename(file_path, new_path)
+                        print(f"✅ Renommé : {filename} → {new_filename}")
+                    else:
+                        print(f"⚠️ {new_filename} existe déjà, ignoré.")
+                else:
+                    print(f"❌ Pas de nVar dans {filename}")
+
+            except Exception as e:
+                print(f"⚠️ Erreur sur {filename} : {e}")
+
 def main():
 
+    n_queens = False
+    test_instance_folder = "instances/graph_coloring"
     executable = "./solver"
     instance_path = "instances/test/"
     algorithms = ["backtrack", "FC", "MAC3", "MAC4"]
     heuristic = 0
     timeout_seconds = 30
-    start_instance = 15
-    end_instance = 35
-    image_output = "Rapport/Images/n-queens2.png"
-    data_output = "Rapport/Data/n-queens2.csv"
+    start_instance = 0
+    end_instance = 20
+    image_output = "Rapport/Images/coloring.png"
+    data_output = "Rapport/Data/coloring.csv"
+    breaking = False
+    
     results = {}
+    test_instances = files = [os.path.join(test_instance_folder, f) for f in os.listdir(test_instance_folder)]
+    test_instances = sorted(test_instances)
 
     for algorithm in algorithms:
         
         algo_results = {"solve_time" : [], "total_time" : []}
 
         for i in range(start_instance,end_instance):
-            instance_file = gen_n_queens(i)
+            if n_queens:
+                instance_file = gen_n_queens(i)
+            else: instance_file = test_instances[i]
 
             try:
                 start = time.time()
@@ -200,20 +240,24 @@ def main():
                 match = re.search(r"Temps de resolution:\s*([\d.]+)\s*secondes", result.stdout)
                 if match:
                     solve_time = float(match.group(1))
-                    print(f"{i}-reines - algo : {algorithm} - temps de résolution : {solve_time}")
+                    print(f"{instance_file} - algo : {algorithm} - temps de résolution : {solve_time}")
                     algo_results["solve_time"].append(solve_time)
                 else:
                     print("Temps de résolution introuvable.")
 
             except subprocess.TimeoutExpired:
-                print(f"L'exécution pour {i}-reines a dépassé {timeout_seconds} secondes et a été arrêtée")
-                break
+                print(f"L'exécution pour {instance_file} a dépassé {timeout_seconds} secondes et a été arrêtée")
+                if breaking:
+                    break
 
         results[algorithm] = algo_results
     
     algo_results = {"solve_time" : [], "total_time" : []}
     for i in range(start_instance, end_instance):
-        instance_file = gen_n_queens(i)
+        if n_queens:
+            instance_file = gen_n_queens(i)
+        else:
+            instance_file = test_instances[i]
 
         start = time.time()
         result = solve_with_or_tools(instance_file,timeout_seconds)
@@ -221,10 +265,11 @@ def main():
         algo_results["total_time"].append(end)
 
         if end > timeout_seconds:
-            print(f"L'exécution pour {i}-reines a dépassé {timeout_seconds} secondes et a été arrêtée")
-            break
+            print(f"L'exécution pour {instance_file} a dépassé {timeout_seconds} secondes et a été arrêtée")
+            if breaking:
+                break
         else:
-            print(f"{i}-reines - algo : cp-sat - temps de résolution : {result["time"]}")
+            print(f"{instance_file} - algo : cp-sat - temps de résolution : {result["time"]}")
             algo_results["solve_time"].append(result["time"])
     
     results["CP-SAT"] = algo_results
