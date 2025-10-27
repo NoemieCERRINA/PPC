@@ -52,7 +52,7 @@ Afin de résoudre des CSP binaires, nous les avons représenté dans notre solve
 
 \begin{itemize}
     \item Le nombre de variables du problème sous la forme d'un entier.
-    \item Une liste des des domaines de chaque variable. Chaque domaine est un entier correspondant aux valeurs autorisées pour chaque variable.
+    \item Une liste des domaines de chaque variable. Chaque domaine est un entier correspondant aux valeurs autorisées pour chaque variable.
     \item Un vecteur de contraintes, où chaque contrainte est un objet de la classe contraintes décrite dans la section \ref{Structure des contraintes}.
     \item Une matrice des contraintes, où chaque élément en $(i,j)$ est soit un pointeur nul s'il n'existe pas de contrainte entre la variable $x_i$ et $x_j$, soit un pointeur vers la contrainte correspondante. Cette matrice permet l'accès en temps constant à la contrainte entre deux variables $x_i$ et $x_j$ données.
 \end{itemize}
@@ -111,7 +111,7 @@ Dans chacune des méthodes présentées ci-dessus, on explore l'arbre d'instanci
     \item \textbf{Backtrack 2} - Retourner FAUX si aucune des valeurs ne permet d'aboutir à une solution réalisable.
 \end{enumerate}
 
-Au vu du nombre important d'appels récursif de la méthode de résolution, la question de la représentation mémoire des domaines à chaque étape est primordiale, pour éviter de copier l'ensemble des domaines en chaque nœud de l'arbre. Comme suggéré durant le cours, nous avons choisi de conserver, pour chaque variable, un seul vecteur des domaines global en mémoire, et de passer comme paramètre de la fonction l'indice du dernier élément \textit{lastElt} du domaine dans ce vecteur. Lorsqu'on retire un élément du domaine, on échange en pratique cet élément avec l'élément d'indice \textit{lastElt - 1}, puis on diminue la valeur de \textit{lastElt} de 1.
+Au vu du nombre important d'appels récursif de la méthode de résolution, la question de la représentation mémoire des domaines à chaque étape est primordiale. Pour éviter de copier l'ensemble des domaines en chaque nœud de l'arbre, nous avons, comme suggéré durant le cours, choisi de conserver, pour chaque variable, un seul vecteur global du domaine en mémoire, et de passer comme paramètre de la fonction l'indice du dernier élément $last\_elt$ du domaine dans ce vecteur. Lorsqu'on retire un élément du domaine, on échange en pratique cet élément avec l'élément d'indice $last\_elt$, puis on diminue la valeur de $last\_elt$ de 1. 
 
 \clearpage
 
@@ -133,7 +133,7 @@ Chaque variable $x_i$ correspond à la position de la reine sur la ligne $i$, et
     \end{cases}
 \]
 
-Le graphique ci-dessous montre le nombre d'instances de n-queens, $n \in {15,\dots,35}$, résolues en moins de 20 secondes par chacune des méthodes ci-dessus. Il est important de noter ici que l'on ne considère pas le temps, non-négligeable, nécessaire pour charger l'instance en mémoire.
+Le graphique ci-dessous montre le nombre d'instances de n-queens, $n \in \{15,\dots,35\}$, résolues en moins de 30 secondes par chacune des méthodes ci-dessus. Il est important de noter ici que l'on ne considère pas le temps, non-négligeable, nécessaire pour charger l'instance en mémoire.
 
 \begin{figure}[H]
     \centering
@@ -144,7 +144,7 @@ Le graphique ci-dessous montre le nombre d'instances de n-queens, $n \in {15,\do
 
 On constate sur ce graphique, que pour ce type de problème, l'algorithme [FC] est le plus efficace. De manière, peut-être, surprenante, l'algorithme [MAC4] a de moins bonnes performances que [MAC3], alors que [MAC4] a une complexité théorique normalement meilleure. Il se peut que [MAC4] fonctionne mieux que [MAC3] sur de plus grandes instances.
 
-On présente dans le tableau suivant la plus grande instance de n-queens résolue en moins de 30 secondes, pour des valeurs de $n \in {15,\dots,35}$.
+On présente dans le tableau suivant la plus grande instance de n-queens résolue en moins de 30 secondes, pour des valeurs de $n \in \{15,\dots,35\}$.
 
 \begin{longtable}{|c|c|}
     \hline
@@ -169,12 +169,22 @@ On présente dans le tableau suivant la plus grande instance de n-queens résolu
     CP-SAT  & 35                           \\
 \end{longtable}
 
-%TODO : nombre d'instance résolue en fonction du temps %
-
 \subsubsection{Évaluation sur le problème de k-coloriage}
 
-%TODO%
-On présente ci-dessous le temps de résolution nécessaire à l'obtention d'une solution pour des problèmes de k-coloriage, choisis par ordre de difficulté croissante.
+On présente ci-dessous le temps de résolution nécessaire à l'obtention d'une solution pour des problèmes de k-coloriage, choisis par ordre de difficulté croissante. On considère un sous-ensemble des problèmes disponibles à l'adresse \href{https://mat.tepper.cmu.edu/COLOR/instances.html}{https://mat.tepper.cmu.edu/COLOR/instances.html}.\\
+
+Pour représenter une instance de $k$-coloriage en extension, on autorise, pour chaque arête $(x_1,x_2)$ du graphe, tous les couples de valeurs $(v_1,v_2)$ avec $v_1 \neq v_2 \in \{0,1,\dots,k-1\}$.
+
+Le graphique ci-dessous montre le nombre d'instances de k-coloriage résolues en moins de 30 secondes par chacune des méthodes mentionnées. Comparé au problème n-reines, les instances de k-coloriage considérées se chargent toutes rapidement en mémoire.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{Images/coloring1.png}
+	\caption{Nombre d'instances de k-coloriage que l'on peut résoudre en moins de t secondes.}
+	\label{fig:coloring1}
+\end{figure}
+
+Sur l'ensemble des instances considérées, la méthode [MAC4] est à nouveau celle qui a les plus mauvaises performances, et [FC] celle qui a les meilleures performances. Une fois encore, le solveur [CP-SAT] a de bien meilleures performances, mais échoue néanmoins à résoudre les deux instances les plus difficiles en moins de 30 secondes.
 
 \subsection{Évaluation du choix de sélection de variable}
 
@@ -227,5 +237,29 @@ Nous étudions à nouveau nos heuristiques sur les méthodes [FC] et [MAC4]
 Evaluons nos différentes heuristiques uniquement sur les méthodes [FC] et [MAC4] qui étaient nos méthodes les plus efficaces de résolution et comparons avec les performances du solveur [CP-SAT] comme dans la partie précédente.
 
 % A envisager potentiellement? Trouver un type de problème pour lequel l'heuristique de choix aléatoire de variables n'est pas la meilleure.
+
+\clearpage
+
+\section{Conclusion}
+
+Les bonnes performances obtenues sur le problème n-reines semblent indiquer que les choix de langage de programmation, structures de données, et d'implémentations étaient judicieux. En revanche, sur ce problème, la question de la représentation du problème s'est posée. En effet, le programme peut prendre jusqu'à quelques minutes pour charger en mémoire les instances les plus grandes. La représentation en extension atteint ici ses limites.\\
+
+Le problème de k-coloriage s'est montré plus difficile sur les instances considérées, et on a pu constater une vraie sous-performance de notre moteur par rapport à des outils open-source plus matures, tel que le solveur open-source [CP-SAT] développé par Google. Pour améliorer les performances du moteur sur ce problème, on pourrait chercher à éliminer les solutions symétriques, et identifier des sous-structures expliquant une infaisabilité.\\
+
+En ce qui concerne les méthodes utilisées, on peut conclure en évoquant les points suivants observés :
+
+\begin{itemize}
+	\item La méthode [FC] est celle qui a les meilleures performances sur l'ensemble des instances. C'est un bon compromis entre un simple backtrack, et une propagation complète des contraintes.
+	\item Les méthodes [Bck] et [MAC4] ont en général de mauvaises performances, la première car elle ne permet pas d'élaguer suffisamment l'arbre de recherche, la seconde car la propagation des contraintes est, en pratique, trop lente.
+	\item La méthode [MAC3] a des performances légèrement moins bonnes que [FC], mais bien meilleures que [MAC4]. En pratique, on préférera donc implémenter [AC3] que [AC4].\\
+\end{itemize}
+
+
+En ce qui concerne les heuristiques de choix de variables, on a pu constater que suivant les problèmes considérés, ce ne sont pas nécessairement les mêmes heuristiques qui donnent les meilleurs résultats en pratique. En particulier : 
+
+\begin{itemize}
+	\item L'heuristique de choix aléatoire de variable est préférable pour le problème n-reines.
+	\item L'heuristique de choix de variable de plus petit domaine est préférable pour le problème de k-coloriage.
+\end{itemize}
 
 \end{document}
