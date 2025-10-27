@@ -6,3 +6,4 @@ k_col_instances/
 100-queens.json
 instances/test
 .venv
+test.py
