@@ -93,7 +93,7 @@ C'est une description en extension des contraintes binaires de notre CSP, dans l
 
 Lorsqu'on double la valeur de n, on augmente la taille mémoire par un facteur 20 environ. Il devient rapidement déraisonnable de souhaiter représenter de tels problèmes en extension pour de plus grande valeurs de n. En pratique on se limitera à n=100 pour les instances de n-reines considérées plus bas. On constatera qu'à priori notre solveur pourrait résoudre des instances de n-reines de taille plus grande, mais qu'alors le temps de chargement des données en mémoire devient très important.
 
-\subsection{Implémentation d'algorithmes}
+\subsection{Implémentation d'algorithmes} \label{Implémentation d'algorithmes}
 
 Parmi les méthodes présentées dans le cours, on a choisi d'implémenter les suivantes :
 \begin{itemize}
@@ -119,15 +119,57 @@ Au vu du nombre important d'appels récursif de la méthode de résolution, la q
 
 \subsection{Évaluation du choix de la méthode de résolution}
 
-\subsubsection{Présentation des méthodes}
-
-%TODO%
-On décrit ici les différentes méthodes abordées en cours pour la résolution d'un CSP binaire implémentées dans notre solveur.
+On évalue ici chacune des méthodes présentées dans la section \ref{Implémentation d'algorithmes}. On compare les performances avec celles du solveur \href{https://developers.google.com/optimization/cp/cp_solver?hl=fr}{[CP-SAT] de Google OR-Tools}. Les variables sont ici choisies dans l'ordre dans lesquelles elles apparaissent.
 
 \subsubsection{Évaluation sur n-reines}
 
-%TODO%
-On présente ci-dessous une évaluation des performances de notre solveur quant au temps de résolution nécessaire pour exhiber une solution du problème n-reines.
+On présente ci-dessous une évaluation des performances de notre solveur quant au temps de résolution nécessaire pour exhiber une solution du problème n-reines. On utilise la formulation compacte (celles ayant le minimum de variables) du problème n-reines :
+
+Chaque variable $x_i$ correspond à la position de la reine sur la ligne $i$, et son domaine est $\{0, 1, \dots, n-1\}$. 
+\[
+\begin{cases}
+	x_i \neq x_j, & \forall i \neq j \quad \text{(pas deux reines sur la même colonne)} \\
+	|x_i - x_j| \neq |i - j|, & \forall i \neq j \quad \text{(pas deux reines sur la même diagonale)}
+\end{cases}
+\]
+
+Le graphique ci-dessous montre le nombre d'instances de n-queens, $n \in {15,\dots,35}$, résolues en moins de 20 secondes par chacune des méthodes ci-dessus. Il est important de noter ici que l'on ne considère pas le temps, non-négligeable, nécessaire pour charger l'instance en mémoire.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{Images/n-queens1.png}
+	\caption{Nombre d'instances de n-queens que l'on peut résoudre en moins de t secondes.}
+	\label{fig:n-queens1}
+\end{figure}
+
+On constate sur ce graphique, que pour ce type de problème, l'algorithme [FC] est le plus efficace. De manière, peut-être, surprenante, l'algorithme [MAC4] a de moins bonnes performances que [MAC3], alors que [MAC4] a une complexité théorique normalement meilleure. Il se peut que [MAC4] fonctionne mieux que [MAC3] sur de plus grandes instances.
+
+On présente dans le tableau suivant la plus grande instance de n-queens résolue en moins de 30 secondes, pour des valeurs de $n \in {15,\dots,35}$.
+
+\begin{longtable}{|c|c|}
+	\hline
+	Méthode & Plus grande instance résolue \\
+	\hline
+	\endfirsthead
+	
+	Méthode & Plus grande instance résolue \\
+	\hline
+	\endhead
+	
+	\hline
+	\endfoot
+	
+	\hline
+	\endlastfoot
+	
+	Bck  & 21 \\
+	MAC4  & 25 \\
+	MAC3  & 30 \\
+	FC  & 31 \\
+	CP-SAT  & 35 \\
+\end{longtable}
+
+%TODO : nombre d'instance résolue en fonction du temps %
 
 \subsubsection{Évaluation sur le problème de k-coloriage}
 
