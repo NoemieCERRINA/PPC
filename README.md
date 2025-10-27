@@ -1,26 +1,6 @@
 # PCC
 Projet de Programmation par contraintes du MPRO
 
-### TODO
-
-- [x] - Définition des structures de données pour représentation d'un CSP.
-- [x] - Implémentation de la méthode de backtrack.
-- [x] - Définition d'une syntaxe pour représentation fichier d'un CSP.
-- [x] - Codage d'un parser fichier -> objets.
-- [x] - Implémentation de AC3.
-- [x] - Implémentation de AC4.
-- [x] - Implémentation de FC.
-- [x] - Codage d'un générateur de fichier à partir d'un CSP objet
-- [x] - Génération de fichiers tests n-reines.
-- [x] - Génération de fichiers tests nombre chromatique.
-- [x] - Implémentation d'options pour choisir l'ordre de sélection des variables.
-- [ ] - Implémentation d'options pour choisir l'ordre de sélection des valeurs.
-- [ ] - Génération d'autres fichiers tests.
-- [x] - Codage des fonctions d'évaluations du moteur.
-- [ ] - Approfondissement (to be defined).
-- [ ] - Rapport de soutenance.
-- [ ] - Slides de soutenance.
-
 ### Exécution
 
 Pour compiler le code (génère un exécutable **solver**): `make`
