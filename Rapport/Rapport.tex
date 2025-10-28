@@ -36,7 +36,7 @@ Nous avons implémenté notre solveur en C++.
 
 Le code, et instructions d'utilisation, est accessible via le lien suivant:
 
- \href{https://github.com/NoemieCERRINA/PPC}{https://github.com/NoemieCERRINA/PPC}
+\href{https://github.com/NoemieCERRINA/PPC}{https://github.com/NoemieCERRINA/PPC}
 
 \subsection{Structure des données}
 
@@ -52,13 +52,13 @@ La liste des paires de valeurs autorisées, implémentée initialement de maniè
 
 \subsubsection{Structure du CSP}
 
-Afin de résoudre des CSP binaires, nous les avons représenté dans notre solveur à l'aide d'une classe CSP contenant les informations suivantes:
+Afin de résoudre des CSP binaires, nous les avons représentés dans notre solveur à l'aide d'une classe CSP contenant les informations suivantes:
 
 \begin{itemize}
-    \item Le nombre de variables du problème sous la forme d'un entier.
-    \item Une liste des domaines de chaque variable. Chaque domaine est un entier correspondant aux valeurs autorisées pour chaque variable.
-    \item Un vecteur de contraintes, où chaque contrainte est un objet de la classe contraintes décrite dans la section \ref{Structure des contraintes}.
-    \item Une matrice des contraintes, où chaque élément en $(i,j)$ est soit un pointeur nul s'il n'existe pas de contrainte entre la variable $x_i$ et $x_j$, soit un pointeur vers la contrainte correspondante. Cette matrice permet l'accès en temps constant à la contrainte entre deux variables $x_i$ et $x_j$ données.
+	\item Le nombre de variables du problème sous la forme d'un entier.
+	\item Une liste des domaines de chaque variable. Chaque domaine est une liste d'entiers correspondant aux valeurs autorisées pour cette variable.
+	\item Un vecteur de contraintes, où chaque contrainte est un objet de la classe contraintes décrite dans la section \ref{Structure des contraintes}.
+	\item Une matrice des contraintes, où chaque élément en $(i,j)$ est soit un pointeur nul s'il n'existe pas de contrainte entre la variable $x_i$ et $x_j$, soit un pointeur vers la contrainte correspondante. Cette matrice permet l'accès en temps constant à la contrainte entre deux variables $x_i$ et $x_j$ données.
 \end{itemize}
 
 \subsection{Représentation fichier}
@@ -115,7 +115,7 @@ Dans chacune des méthodes présentées ci-dessus, on explore l'arbre d'instanci
 	\item \textbf{Backtrack 2} - Retourner FAUX si aucune des valeurs ne permet d'aboutir à une solution réalisable.
 \end{enumerate}
 
-Au vu du nombre important d'appels récursif de la méthode de résolution, la question de la représentation mémoire des domaines à chaque étape est primordiale. Pour éviter de copier l'ensemble des domaines en chaque nœud de l'arbre, nous avons, comme suggéré durant le cours, choisi de conserver, pour chaque variable, un seul vecteur global du domaine en mémoire, et de passer comme paramètre de la fonction l'indice du dernier élément $last\_elt$ du domaine dans ce vecteur. Lorsqu'on retire un élément du domaine, on échange en pratique cet élément avec l'élément d'indice $last\_elt$, puis on diminue la valeur de $last\_elt$ de 1. 
+Au vu du nombre important d'appels récursif de la méthode de résolution, la question de la représentation mémoire des domaines à chaque étape est primordiale. Pour éviter de copier l'ensemble des domaines en chaque nœud de l'arbre, nous avons, comme suggéré durant le cours, choisi de conserver, pour chaque variable, un seul vecteur global du domaine en mémoire, et de passer comme paramètre de la fonction l'indice du dernier élément $last\_elt$ du domaine dans ce vecteur. Lorsqu'on retire un élément du domaine, on échange en pratique cet élément avec l'élément d'indice $last\_elt$, puis on diminue la valeur de $last\_elt$ de 1.
 
 \clearpage
 
@@ -208,9 +208,9 @@ Quatre méthodes de choix de variables ont été implémentées dans notre solve
 
 \subsubsection{Évaluation sur n-reines}
 
-Évaluons nos différentes heuristiques uniquement sur les méthodes [FC] et [MAC4] qui étaient nos méthodes les plus efficaces de résolution et comparons avec les performances du solveur [CP-SAT] comme dans la partie précédente.
+Évaluons nos différentes heuristiques uniquement sur les méthodes [FC] et [MAC4] qui étaient nos méthodes les plus et moins efficaces de résolution et comparons avec les performances du solveur [CP-SAT] comme dans la partie précédente.
 
-Nous observons sur la figure \ref{fig:n-queens-h1} que sur le problème des n-reines, l'heuristique de choix influe fortement sur la performance de nos algorithmes. [FC] demeure significativement plus performant que [MAC] lorsque la même heuristique de choix est appliquée. Cependant un mauvais choix de variable peut pénaliser un algorithme supposé plus efficace comme le montre la mauvaise performance de [FC] avec l'heuristique de choix du plus grand domaine (h2).
+Nous observons sur la figure \ref{fig:n-queens-h1} que sur le problème des n-reines, l'heuristique de choix influe fortement sur la performance de nos algorithmes. [FC] demeure significativement plus performant que [MAC4] lorsque la même heuristique de choix est appliquée. Cependant un mauvais choix de variable peut pénaliser un algorithme supposé plus efficace comme le montre la mauvaise performance de [FC] avec l'heuristique de choix du plus grand domaine (h2).
 
 \begin{figure}[H]
 	\centering
@@ -236,9 +236,11 @@ Si nous nous intéressons maintenant uniquement à la comparaison des heuristiqu
 
 \subsubsection{Évaluation sur le problème de k-coloriage}
 
-Evaluons nos différentes heuristiques uniquement sur les méthodes [FC] et [MAC4] qui étaient nos méthodes les plus efficaces de résolution.
+Evaluons à nouveau nos différentes heuristiques uniquement sur les méthodes [FC] et [MAC4].
 
 Le solveur [CP-SAT] résout l'intégralité de nos instances en moins d'un dixième de seconde donc il serait vain de s'y comparer. Nous observons qu'une grande marge de progression demeure pour que notre solveur soit près d'être compétitif.
+
+On maintient sur la figure \ref{fig:coloriage-h} les mêmes observations sur l'importance de l'heuristique de choix sur l'efficacité de nos algorithmes effectuées dans la partie précédente: [FC] demeure significativement plus performant que [MAC4] avec une heuristique de choix identique mais un mauvais choix de variable peut suffisamment pénaliser un algorithme supposé efficace pour qu'il devienne moins bon qu'un autre avec une meilleure heuristique.
 
 \begin{figure}[H]
 	\centering
@@ -246,8 +248,6 @@ Le solveur [CP-SAT] résout l'intégralité de nos instances en moins d'un dixi�
 	\caption{Nombre d'instances de k-coloriage résolues par [FC] et [MAC] en fonction de l'heuristique de choix}
 	\label{fig:coloriage-h}
 \end{figure}
-
-On maintient sur la figure \ref{fig:coloriage-h} les mêmes observations sur l'importance de l'heuristique de choix sur l'efficacité de nos algorithmes effectuées dans la partie précédente: [FC] demeure significativement plus performant que [MAC] avec une heuristique de choix identique mais un mauvais choix de variable peut suffisamment pénaliser un algorithme supposé efficace pour qu'il devienne moins bon qu'un autre avec une meilleure heuristique.
 
 En se penchant plus spécifiquement sur les performances d'une heuristique de choix avec notre meilleur algorithme [FC], on observe:
 \begin{itemize}
@@ -276,11 +276,11 @@ En ce qui concerne les méthodes utilisées, on peut conclure en évoquant les p
 \end{itemize}
 
 
-En ce qui concerne les heuristiques de choix de variables, on a pu constater que suivant les problèmes considérés, ce ne sont pas nécessairement les mêmes heuristiques qui donnent les meilleurs résultats en pratique. En particulier : 
+En ce qui concerne les heuristiques de choix de variables, on a pu constater que suivant les problèmes considérés, ce ne sont pas nécessairement les mêmes heuristiques qui donnent les meilleurs résultats en pratique. En particulier :
 
 \begin{itemize}
-	\item L'heuristique de choix aléatoire de variable est préférable pour le problème n-reines.
-	\item L'heuristique de choix de variable de plus petit domaine est préférable pour le problème de k-coloriage.
+	\item L'heuristique de choix aléatoire de variable et celle du plus petit domaine sont préférables pour le problème n-reines.
+	\item L'heuristique de choix de variable de plus petit domaine est préférable pour le problème de k-coloriage tandis que le choix aléatoire de variables devient la pire heuristique.
 \end{itemize}
 
 \end{document}
